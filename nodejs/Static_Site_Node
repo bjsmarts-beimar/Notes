@@ -1,0 +1,112 @@
+. Create Sample NODEJS App
+> npm init 
+> touch index.js
+
+. add Express 
+> npm install express --save
+
+START EXPRES App
+================
+. Open Index.js
+
+var express = require('express');
+var app = express();
+var port = 5000;
+
+app.get('/', function(req, res) {
+    res.send('Hello World');
+});
+
+app.listen(port, function(err) {
+    console.log('running server on port' + port);
+});
+
+. Open package.json
+"start": "node index.js"
+
+. start application
+> npm start
+
+. if an error is thrown when executing npm start, remove node_modules
+> rm -fr node_modules
+
+. download the following bootstrap template
+https://www.bootstrapzero.com/bootstrap-template/storystrap
+
+. create "public" folder on the application root
+
+. move css and js file to public folder
+
+. create "src/views" folder on the application root
+
+. move index.html to the "src/views" folder
+
+. add the following lines to index.js file
+
+app.use(express.static('public'));
+app.use(express.static('src/views'));
+
+Installing Bower
+================
+. Install bower using npm
+> npm install bower -g
+
+. Initialize bower
+> bower init
+
+. create .bowerrc file 
+{
+    "directory": "public/lib"
+}
+
+> bower install --save bootstrap
+
+> bower install --save font-awesome
+
+. update references to css and js on Index.html
+
+. remove existing references
+
+Install Gulp
+============
+Run the following commands
+> npm install gulp --save
+> npm install gulp -g 
+> npm install gulp-nodemon --save
+
+. Add gulpfile.js
+
+. Add the following code 
+var gulp = require('gulp');
+var nodemon = require('gulp-nodemon');
+
+gulp.task('default', function() {
+    nodemon({
+        script: 'index.js',
+        ext: 'js',
+        env: {
+            PORT: 8000
+        },
+        ignore: ['./node_modules/**']
+    })
+    .on('restart', function() {
+        console.log('Restarting');
+    });
+});
+
+. Run the App 
+> gulp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
