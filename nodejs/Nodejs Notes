@@ -37,11 +37,11 @@ app.listen(port, function(err) {
 . Open package.json
 "start": "node index.js"
 
-. Remove node_modules
-> rm -fr node_modules
-
 . start application
 > npm start
+
+. if an error is thrown when executing npm start, remove node_modules
+> rm -fr node_modules
 
 
 
