@@ -11,4 +11,5 @@ Push changes to github
 ======================
 . git status
 . git add .
-. git commit -a -m "comments" 
+. git commit -a -m "comments"
+. git push -u origin master 
