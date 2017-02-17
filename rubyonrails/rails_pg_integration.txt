@@ -1,0 +1,112 @@
+
+Install PostgreSQL on Mac OS
+============================
+
+run the following command to install postgres:
+
+> brew install postgres
+
+run the following command to get info about the installation:
+> brew info postgresql
+
+run the following command to start the service
+> brew services start postgresql
+
+Initialize user and database using the following commands:
+
+> createuser pguser
+> createdb -Opguser -Eutf8 app_Development
+> createdb -Opguser -Eutf8 app_Test
+> psql -U pguser app_Development
+
+Install the gem file that will allows us to connect rails with postgres
+
+> gem install pg
+
+Create a Rails Test App to test postgres installation
+
+> rails new MyPostgreSqlApp --database=postgresql
+
+Add 'devise' to your Gemfile with:
+
+> gem 'devise'
+> bundle install
+
+Run the following commands to create the User Model: 
+
+> rails generate devise:install
+> rails generate devise User
+> rake db:migrate
+
+Install PostgresSQL on Ubuntu
+=============================
+
+run the following command to install postgres:
+
+> sudo apt-get update
+> sudo apt-get install postgresql postgresql-contrib
+> sudo apt-get install libpq-dev
+
+connect to Postgres
+
+> sudo -i -u postgres
+> psql
+
+Create Postgres Databases
+
+> createdb -Opostgres -Eutf8 App_Development
+> createdb -Opostgres -Eutf8 App_Test
+
+> psql -U pguser app_Development
+
+Install the Postgres Gem 
+
+> gem install pg
+
+Create a Rails Test App to test postgres installation
+
+> rails new MyPostgreSqlApp --database=postgresql
+
+Add 'devise' to your Gemfile with:
+
+> gem 'devise'
+> bundle install
+
+Run the following commands to create the User Model: 
+
+> rails generate devise:install
+> rails generate devise User
+> rake db:migrate
+
+Error: rake aborted!   FATAL:  Peer authentication failed for user "postgres"
+
+Resolution: 
+
+If you installed postresql on your server then just host: localhost to database.yml, I usually throw it in around where it says pool: 5. Otherwise if it's not localhost definitely tell that app where to find its database.
+
+development:
+  adapter: postgresql
+  encoding: unicode
+  database: kickrstack_development
+  host: localhost
+  pool: 5
+  username: kickrstack
+  password: secret
+Make sure your user credentials are set correctly by creating a database and assigning ownership to your app's user to establish the connection. To create a new user in postgresql 9 run:
+
+sudo -u postgres psql
+set the postgresql user password if you haven't, it's just backslash password.
+
+postgres=# \password
+Create a new user and password and the user's new database:
+
+postgres=# create user "guy_on_stackoverflow" with password 'keepitonthedl';
+postgres=# create database "dcaclab_development" owner "guy_on_stackoverflow"; 
+Now update your database.yml file after you've confirmed creating the database, user, password and set these privileges. Don't forget host: localhost.
+
+
+
+
+
+
+

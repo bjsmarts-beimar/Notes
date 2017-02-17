@@ -1,0 +1,61 @@
+- create empty shell project
+
+- In the Gemfile add gem to serialize the resources we are going to expose on the api
+
+	> gem 'active_model_serializers'
+
+- Also comment the 'jbuilder' and 'turbolinks' gem in the Gemfile, as we are not going
+to deal with the frontend part. We will only create the json response which doesn't need these gems
+
+- run bundle install
+
+- make the directory /api/v1
+
+  > mkdir app/controllers/api
+  > mkdir app/controllers/api/v1
+
+- modify the routes.rb file
+
+Ex:
+
+Rails.application.routes.draw do
+  # API routes path
+  namespace :api, defaults: { format: :json } do
+    namespace :v1 do
+
+    end
+  end  
+end 
+
+- Error Message when u run "rails generate devise:install".  Run the following two commands
+						> spring stop
+						> rails generate
+
+- sqlite3 -> go to db directory and run the command "sqlite3" + database name -> use .schema .database .help .quit
+
+- create the model
+
+- create the controller
+
+- Create the Database
+
+> rake db:create
+
+- Instantiate the Schema
+
+> rake db:migrate
+
+- Create the controller
+
+Ex: 
+
+class Api::V1::UsersController < ApplicationController
+  respond_to :json
+
+  def show
+    respond_with User.find(params[:id])
+  end
+end  
+
+
+

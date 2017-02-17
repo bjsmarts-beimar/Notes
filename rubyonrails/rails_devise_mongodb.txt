@@ -1,0 +1,57 @@
+Rails -> Devise -> MongoDb
+==========================
+
+- Create the App
+$ rails _4.2.6_ new devise-mongo-rails --skip-bundle -T -O
+
+$ rails _4.2.6_ new nvslonline --skip-bundle --skip-turbolinks --skip-spring --skip-test-unit --skip-activerecord
+
+-O --skip-activerecord
+-T --skip-test-unit Skip Test::Unit files
+-J skip-prototype  //skip prototype and use jquery
+
+- open your Gemfile and add:
+
+source 'https://rubygems.org'
+source 'http://gems.github.com'
+
+gem 'mongoid', github: "mongoid/mongoid"
+gem 'bson_ext'
+gem 'devise'
+
+- run 
+$ bundle install
+
+- create your sample entity
+
+$ rails generate scaffold Movie name:string storyline:string
+
+- generate the mongodb configuration file
+$ rails g mongoid:config
+
+- run the Devise generator
+
+$ rails g devise:install
+
+- create a model for authentication, generally it is named User 
+$ rails generate devise User
+
+- add the following to app/views/layout/application main file
+
+<div>
+<% if user_signed_in? %>
+    Welcome <%=  current_user.email %>
+    <%= link_to "Sign out", destroy_user_session_path, :method => :delete %>
+<% else %>
+    <%= link_to "Sign in", new_user_session_path%> or <%= link_to "Sign up", new_user_registration_path %>
+<% end %>
+</div>
+
+- To protect controller add a filter, we are going to protect all other 
+action other than movie listing page:
+
+# In our controllers
+before_filter :authenticate_user!, :except => [:index]
+
+
+

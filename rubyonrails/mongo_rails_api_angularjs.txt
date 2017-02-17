@@ -1,0 +1,54 @@
+
+
+$ git clone https://github.com/jesalg/RADD.git
+
+gem 'active_model_serializers'
+gem 'responders', '~> 2.0'
+gem 'mongoid', '~> 4.0.2'
+gem 'bson_ext'
+gem 'devise'
+
+$ bundle install
+$ rails g mongoid:config
+
+$ rails destroy model Record
+$ rails g model Record data:string
+
+$ rails destroy devise user
+$ rails generate devise user
+
+$ rails destroy devise:install
+$ rails g devise:install
+
+
+
+
+
+create  config/initializers/devise.rb
+      create  config/locales/devise.en.yml
+
+
+invoke  active_record
+      create    db/migrate/20160801003302_devise_create_users.rb
+      create    app/models/user.rb
+      invoke    test_unit
+      create      test/models/user_test.rb
+      create      test/fixtures/users.yml
+      insert    app/models/user.rb
+       route  devise_for :users
+
+
+invoke  mongoid
+      remove    app/models/user.rb
+      invoke    rspec
+      remove      spec/models/user_spec.rb
+      invoke      factory_girl
+      remove        spec/factories/users.rb
+       route  devise_for :users
+
+remove  config/initializers/devise.rb
+      remove  config/locales/devise.en.yml
+
+
+
+

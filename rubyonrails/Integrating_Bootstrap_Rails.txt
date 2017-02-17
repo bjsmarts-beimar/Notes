@@ -1,0 +1,34 @@
+Integrating Bootstrap with Rails
+================================
+
+1. Let’s add the necessary gems to our Gemfile:
+
+gem 'bootstrap-sass', '~> 3.2.0'
+gem 'autoprefixer-rails'
+
+Now run
+
+bundle install
+
+2. We will rename app/assets/stylesheets/application.css to app/assets/stylesheets/application.css.sass. 
+Then we can import the Bootstrap assets in your newly-renamed application.css.sass file.
+
+@import "bootstrap-sprockets"
+@import "bootstrap"
+
+3. Import Bootstrap Javascript assets
+You need to add the following to your app/assets/javascripts/application.js file.
+
+//= require jquery
+//= require jquery_ujs
+//= require turbolinks
+//= require bootstrap-sprockets
+//= require_tree .
+
+4. Create the Home Controller
+
+add the following
+
+<h1>Welcome to Bootstrap</h1>
+<a class="btn btn-primary" href="#/users/new">Create a user</a> 
+

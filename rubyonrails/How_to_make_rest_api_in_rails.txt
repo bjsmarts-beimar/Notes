@@ -1,0 +1,72 @@
+How to make REST API in Rails
+=============================
+
+
+1. Create the App 
+
+rails new railsapi
+
+2. In the Gemfile add gem to serialize the resources we are going to expose on the api
+
+gem 'active_model_serializers' 
+gem 'responders', '~> 2.0'
+
+3. Also comment the 'jbuilder' and 'turbolinks' gem in the Gemfile, as we are not going
+to deal with the frontend part. We will only create the json response which doesn't need these gems. 
+
+4. run => bundle install
+
+5. run the following commands =>
+
+$ mkdir app/controllers/api
+$ mkdir app/controllers/api/v1
+
+6. Add the following routes to config/routes.db
+
+namespace :api, defaults: { format: :json } do
+    namespace :v1 do
+      get     "/contacts/:id", to: "contacts#show"
+    end
+end  
+
+7. Create the Model
+
+$ rails g model contact
+
+add the following to migration file: 
+
+    t.string   "name"
+    t.string   "email"
+    t.string   "twitter"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "relationship"
+
+ Run the following commands =>
+
+ rake db:create
+ rake db:migrate
+
+ connec to db:
+
+ insert into contacts (name, email, twitter) values ('John Smith', 'john@yahoo.com', 'twitter');
+
+
+8. Create the Controller for the Model 
+
+$ rails g controller contacts
+
+move the controller to api/v1 folder
+
+edit the controller
+
+class Api::V1::ContactsController < ApplicationController
+  respond_to :json
+
+  def show
+    respond_with Contact.find(params[:id])
+  end
+end  
+
+
+

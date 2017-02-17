@@ -1,0 +1,49 @@
+Rails => RSpec
+==============
+
+RSPec is a Testing Tool for the Ruby Programming Language
+
+
+Steps for BDD => Behabior Driven Testing
+========================================
+
+Step 1 => Write behavior
+Step 2 => Run the Test and experience Test Failures
+Step 3 => Write Code to correct Test Failures
+
+Check rspec version
+===================
+> rspec -v
+
+RSpec Installation Sample
+=========================
+
+> rails new rspec_app --skip-test-unit
+
+group :development, :test do
+  gem 'rspec-rails'
+end
+
+> bundle install
+
+> rails generate rspec:install
+
+> rails g model Student name:string age:integer
+
+> rake db:migrate
+
+> rake -T spec
+
+> rake spec
+
+> rspec spec --format documentation --color
+
+"describe" and "it"
+===================
+
+
+
+
+
+
+

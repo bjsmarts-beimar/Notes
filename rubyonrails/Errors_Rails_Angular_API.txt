@@ -1,0 +1,109 @@
+Errors
+======
+
+- If you run ruby -v you're going to see that you've installed Ruby 1.9.3, but the first line in your Gemfile specifies that you want to use Ruby 2.0.0.  You should either install Ruby 2.0.0 or change the first line in your Gemfile to specify Ruby 1.9.3.
+
+
+Error:
+
+An error occurred while installing pg (0.18.1), and Bundler cannot continue. Make sure that "gem install pg -v '0.18.1" succeeds before bundling.
+
+In Ubuntu:
+
+- Run > sudo apt-get install libpq-dev
+
+In Mac
+
+- Run > 
+
+brew uninstall postgresql
+brew install postgresql
+gem install pg
+
+or 
+
+- Run >
+
+bundle install --without production
+
+Error: 
+
+An error occurred while installing json (1.8.0), and Bundler cannot continue.
+Make sure that `gem install json -v '1.8.0'` succeeds before bundling.
+
+- I found the solution here. There is a problem with json version 1.8.1 and ruby 2.2.3, so install json 1.8.3 version.
+
+gem install json -v1.8.3
+or add gem json '1.8.3' to Gemfile
+
+
+Error:
+
+rake aborted!
+StandardError: An error has occurred, this and all later migrations canceled:
+
+wrong number of arguments (1 for 0)
+ArgumentError: wrong number of arguments (1 for 0)
+
+- If you are using Rails 4.2.0.beta4, ActiveRecord will require arel gem. Add the following to your gem file
+
+gem 'arel', '6.0.0.beta2'
+
+To Setup a project: 
+
+
+bundle install
+rake bower:install
+rake db:migrate
+rake db:seed
+
+Error:
+
+rails generate devise:install HANGS....
+
+Resolution:
+
+run the following commands:
+
+spring stop
+rails generate
+
+
+
+Error: How to install RSpec on Sublime Text Editor
+
+Resolution:
+
+I spent many hours struggling with this same problem! I could not get rspec to run within Sublime Text 2, using the Michael Hartl "Ruby on Rails Tutorial." It kept saying
+
+/bin/sh: rspec: command not found
+I finally realized that the RubyTest package was looking in the WRONG PLACE for my RVM!
+
+On my Mac, the path for RubyTest is /Library/Application Support/Sublime Text 2/Packages/Ruby Test
+
+First, to make RubyTest seek the RVM, I changed the parameter in RubyTest.sublime-settings from
+
+"check_for_rvm": false, to "check_for_rvm": true,
+
+Then I dug into the Python code of run_ruby_test.py.
+
+At line 151, inside class BaseRubyTask, it had the wrong path for my RVM:
+
+rvm_cmd = os.path.expanduser('~/.rvm/bin/rvm-auto-ruby')
+I changed it to the full correct path:
+
+rvm_cmd = os.path.expanduser('/usr/local/rvm/bin/rvm-auto-ruby')
+If this is not your path, find the correct path by typing which rvm-auto-ruby and substitute that instead.
+
+After saving run_ruby_test.py, I went to Terminal, cd to my Rails application directory, and ran spork
+
+Finally, I opened static_pages_spec.rb in Sublime Text 2. Now all the tests work from it!
+
+
+
+
+
+
+
+
+

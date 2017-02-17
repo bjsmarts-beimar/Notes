@@ -1,0 +1,53 @@
+What is an Associations?
+In Rails, an association is a connection between two Active Record models. 
+
+Rails supports six types of associations:
+
+belongs_to
+has_one
+has_many
+has_many :through
+has_one :through
+has_and_belongs_to_many
+
+Creating App testing Associations
+=================================
+
+> rails new Association_App
+
+> rails g model customer name:string
+
+> rails g model order order_date:datetime
+
+> rake db:migrate
+
+class Order < ActiveRecord::Base
+	belongs_to :Customer
+end
+
+class Customer < ActiveRecord::Base
+	has_many :Order, :dependent => :destroy
+end
+
+> rails g migration AddCustomerReferenceToOrders
+
+class AddCustomerReferenceToOrders < ActiveRecord::Migration
+  def change
+  	add_column :orders, :customer_id, :integer
+  end
+end
+
+> rake db:migrate
+
+customer1 = Customer.create(
+	[ { name: 'Beimar Medina' } ])
+
+order1 = Order.create(
+	[ {order_date: Date.current} ])
+
+customer1.orders << @order1
+
+> rake db:seed
+
+
+

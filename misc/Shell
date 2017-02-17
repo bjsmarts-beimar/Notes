@@ -1,0 +1,13 @@
+. to find out your shell 
+> ECHO $shell
+
+. you can see all invisible files by typing 
+> ls -la
+
+. to change your terminal prompty, go to home directory and type: 
+> vi .bashrc
+. add the following line 
+export PS1="\w $ "
+.save the file 
+.add the prompt enter the following command
+> source ~/.bashrc

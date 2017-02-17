@@ -1,0 +1,198 @@
+
+
+Rails API Bootstrap Angular Git Heroku RSpec
+============================================
+
+- Create the new App
+
+> rails new XNightLife --database=postgresql --skip-test-unit
+
+Add the following to GemFile
+
+gem 'devise'   #for Authentication
+gem 'active_model_serializers' 
+gem 'responders', '~> 2.0'
+gem 'angularjs-rails'
+gem 'angular-ui-bootstrap-rails' #for bootstrap UI
+gem 'twitter-bootstrap-rails' 
+gem 'devise-bootstrap-views'
+
+group :development, :test do
+  gem 'rspec-rails'
+end
+
+> bundle install
+
+- Instal devise and rspec
+
+> rails generate devise:install
+> rails generate rspec:install
+
+- Create the Web API Folders
+
+> mkdir app/controllers/api
+> mkdir app/controllers/api/v1
+
+Add the following routes to config/routes.db
+
+namespace :api, defaults: { format: :json } do
+    namespace :v1 do
+
+    end
+end  
+
+- Create the following Models:
+
+> rails generate devise User
+> rails generate model Club title:string
+> rails generate model Event title:string
+> rails generate model Contact title:string
+
+
+> rake db:create
+> rake db:migrate
+
+
+Club.create([ { title: 'Peabodys' } ])
+Club.create([ { title: 'Have nice cafe' } ])
+
+Event.create([ { title: 'Thursday Girls Out' } ])
+Event.create([ { title: 'Saturday College Night' } ])
+
+Contact.create([ { title: 'John Smith' } ])
+Contact.create([ { title: 'James Rodriguez' } ])
+
+> rake db:seed
+
+- Edit the following files: 
+
+app/controllers/application_controller.rb : 
+   before_action :authenticate_user!
+
+- add the logout link to the home page
+<%= link_to "logout", destroy_user_session_path, method: :delete %>
+
+Run the following command to add Bootstrap
+
+> rails generate bootstrap:install static
+> rails generate bootstrap:layout application
+
+- Edit app/assets/stylesheets/application.css, add the following
+
+> *= require devise_bootstrap_views
+
+- Run the following commands to update the views:
+
+> rails generate devise:views:locale en
+> rails generate devise:views:bootstrap_templates
+
+- Adding ng-app and ng-view indicates that we have an AngularJS app in the page.
+
+<html ng-app="myapplication">
+ <head>
+   <title>Application Name</title>
+   <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
+   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+   <%= csrf_meta_tags %>
+ </head>
+ <body>
+   <div class="container" ng-view>
+     <%= yield %>
+   </div>
+ </body>
+</html>
+
+- Add the Angular Main controller to the App
+
+> mkdir -p app/assets/javascripts/angular/
+> touch app/assets/javascripts/angular/App.js 
+
+var myApp = angular.module('myapplication', ['ngRoute', 'ngResource']); 
+
+myApp.controller('GreetingController', ['$scope', function($scope) {
+  $scope.greeting = 'Welcome Ruby + API + Angular + Bootstrap !!!';
+}]);
+
+//Routes
+myApp.config([
+  '$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+    $routeProvider.when('/home',{
+      templateUrl: '/home/index.html',
+      controller: 'GreetingController'
+    });
+    $routeProvider.otherwise({
+      redirectTo: '/home'
+    });
+  }
+]);
+
+
+- Create Angular Template Files
+
+$ mkdir public/home
+$ touch public/home/index.html
+
+<h1>{{greeting}}</h1>
+
+- Update Rails routing file => config/routes.rb
+
+Add the following:
+
+  resources :home
+
+  root 'home#index'
+
+- Update Javascript Rails File => app/assets/javascripts/application.js 
+
+Add the following:
+
+//= require angular
+//= require angular-route
+//= require angular-resource
+//= require angular-ui-bootstrap
+//= require turbolinks
+//= require_tree .
+
+Create the following Controllers
+
+> rails generate controller Clubs
+> rails generate controller Events
+> rails generate controller Contacts
+
+Move the controllers to api/v1 folder
+
+> mv app/controllers/clubs_controller.rb app/controllers/api/v1/
+> mv app/controllers/events_controller.rb app/controllers/api/v1/
+> mv app/controllers/contacts_controller.rb app/controllers/api/v1/
+
+Edit the Controllers: 
+
+class Api::V1::ClubsController < ApplicationController
+  respond_to :json
+
+  def show
+    respond_with Club.find(params[:id])
+  end
+end
+
+class Api::V1::EventsController < ApplicationController
+  respond_to :json
+
+  def show
+    respond_with Event.find(params[:id])
+  end
+end
+
+class Api::V1::ContactsController < ApplicationController
+  respond_to :json
+
+  def show
+    respond_with Contact.find(params[:id])
+  end
+end
+
+
+
+
+
+

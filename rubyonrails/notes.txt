@@ -1,0 +1,73 @@
+Commands
+========
+
+. rails new club_finder
+. bundle install
+. update database from sqlite to pg || postgres
+
+group :development, :test do
+  gem 'sqlite3'
+end
+
+group :production do
+	gem 'pg'
+	gem 'rails_12factor'
+end
+
+. bundle update
+. bundle install --without production
+
+. rails generate controller Welcome index
+
+. add the following route to the routes.rb
+
+	root 'welcome#index'
+
+. add the app to Github
+. username: beimar.medina@outlook.com password: P@ss(0)d!
+. git init
+. git add .
+. git commit -m "Initial commit"
+. git remote add origin https://github.com/bjsmarts-beimar/club_finder.git
+. git push -u origin master
+. gem install heruku
+. heroku login
+. heroku create
+. git push heroku master
+. heroku run rake db:create
+. heroku run rake db:schema:load
+. heroku run rake db:migrate
+. heroku open
+
+
+push changes to github
+======================
+. git status
+. git add .
+. git commit -a -m "comments" 
+. git push 
+. git push heroku master
+. heroku run rake db:migrate
+. heroku open
+
+
+generate mvc code
+=================
+. rails generate scaffold
+. bundle exec rake db:migrate
+
+
+
+generate a static page
+======================
+.rails generate controller StaticPages home help
+
+
+
+
+
+
+
+
+
+

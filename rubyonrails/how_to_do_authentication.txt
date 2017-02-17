@@ -1,0 +1,30 @@
+Using devise for User Authentication in Rails
+=============================================
+
+1. create your project > rails new userApp
+
+2. Add 'devise' to your Gemfile with:
+
+gem 'devise'
+bundle install
+
+3. run > rails generate devise:install
+
+4. Add the flash messages in app/views/layouts/application.html.erb.
+     For example:
+
+       <p class="notice"><%= notice %></p>
+       <p class="alert"><%= alert %></p>
+
+       <div class="container" ng-view>
+     		<%= yield %>
+   	   </div>
+
+5. create the model run the following commands:
+
+$ rails generate devise user
+$ rake db:create
+$ rake db:migrate
+$ rake db:seed
+
+6. check application routes by running command: rake routes

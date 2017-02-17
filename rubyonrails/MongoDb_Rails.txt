@@ -1,0 +1,235 @@
+Installing MongoDb Mac OS x - Route A
+=====================================
+
+1. Download the zip file from www.mongodb.org
+
+2. create the following directories
+
+> mkdir ~/data
+> mkdir ~/data/db
+> mkdir ~/data/logs
+
+3. change permissions
+
+> chmod 777 ~/data/db
+> chmod 777 ~/data/logs
+
+Installing MongoDB - Route B
+============================
+Installing MongoDB varies by platform. If you are using OS-X installing 
+MongoDB is pretty easy. Simply perform the following steps:
+
+1.  With homebrew installed, run 
+    $ brew install mongodb  
+
+2. Install brew services with 
+    $ brew tap homebrew/services 
+    
+Note: Homebrew services allow you to easily add services like MongoDB to startup.
+3. Run the command 
+    $ brew services start mongodb
+
+4. Visit http://localhost:27017 to verify installation. 
+If MongoDB has been installed correctly you will see the message 
+It looks like you are trying to access MongoDB over HTTP on the 
+native driver port. at the top of the browser window.
+
+Create MongoDb Rails App
+========================
+- Create the App
+$ rails _4.2.6_ new mongoRailsApp --skip-bundle -T -O
+
+- Open your Gemfile 
+
+source 'https://rubygems.org'
+source 'http://gems.github.com'
+
+
+gem 'mongoid', github: "mongoid/mongoid"
+gem 'bson_ext'
+
+- Now run a bundle install to install the gem.
+
+- Now let's tell mongoid to create a config file. To do this, run the following terminal command
+$ rails g mongoid:config
+
+- Next we need to create the model
+$ rails g model person first_name last_name email notes
+
+- Now we need to create the controller. To do this, run the command listed below.
+$ rails g controller people index new create edit update destroy
+
+- Now we need to modify our routes file. Open up the config/routes.rb 
+file and modify it so that it looks like the code listed below.
+
+Rails.application.routes.draw do
+  resources :people, except: [:show]
+
+  root to: "people#index"
+end
+
+- Next let's add in the controller code. Open up app/controllers/people_controller.rb and 
+modify it so that it looks like the code listed below.
+
+class PeopleController < ApplicationController
+  def index
+    @people = Person.all
+  end
+
+  def new
+    @person = Person.new
+  end
+
+  def create
+    @person = Person.new(person_params)
+
+    if @person.save
+      redirect_to people_path, notice: "The person has been created!" and return
+    end
+    render 'new'
+  end
+
+  def edit
+    @person = Person.find(params[:id])
+  end
+
+  def update
+    @person = Person.find(params[:id])
+ 
+    if @person.update_attributes(person_params)
+      redirect_to root_path, notice: "#{@person.first_name} #{@person.last_name} has been updated!" and return
+    end
+ 
+    render 'edit'
+  end
+ 
+  def destroy
+    @person = Person.find(params[:id])
+    @person.destroy
+    redirect_to root_path, notice: "#{@person.first_name} #{@person.last_name} has been deleted!" and return
+  end
+private
+  def person_params
+    params.require(:person).permit(:first_name, :last_name, :email, :notes)
+  end
+end
+
+- Before we get started on the views, let's add Bootstrap to the project 
+to pretty things up a bit. Open up the app/views/layouts/application.html.erb 
+file and modify it so that it looks like the code listed below.
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MongoDBExampleApp</title>
+  <%= stylesheet_link_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css' %>
+  <%= javascript_include_tag 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js' %>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+	<div class="container">
+		<%= yield %>
+	</div>
+</body>
+</html>
+
+- Next up, let's create a file called _form.html.erb in the app/views/people 
+folder. This file will store our form that will be used to both create an 
+exist an existing person. Once you create the file, add in the code listed 
+below.
+
+<%= form_for @person do |f| %>
+	<div class="form-group">
+		<%= f.label :first_name %>
+		<%= f.text_field :first_name, class: "form-control" %>
+	</div>
+	<div class="form-group">
+		<%= f.label :last_name %>
+		<%= f.text_field :last_name, class: "form-control" %>
+	</div>
+	<div class="form-group">
+		<%= f.label :email %>
+		<%= f.text_field :email, class: "form-control" %>
+	</div>
+	<div class="form-group">
+		<%= f.label :notes %>
+		<%= f.text_area :notes, class: "form-control" %>
+	</div>
+	<%= f.submit class: "btn btn-primary" %>
+<% end %>
+
+- Next, let's open the new person view at app/views/people/new.html.erb and 
+add in the code listed below. This will include the form we just created so 
+that we can create a new person.
+
+<h1>New Person</h1>
+<div class="well">
+	<%= render "form" %>
+</div>
+
+- Now, let's modify our edit person view and add in the form. Open up the edit 
+person view and modify it so that it looks like the code listed below.
+
+<h1>New Person</h1>
+<div class="well">
+	<%= render "form" %>
+</div>
+
+- Now, let's create our index view. Open up the index view for our people 
+controller at app/views/people/index.html.erb and modify it so that it looks 
+like the code listed below.
+
+<h1>People</h1>
+<div class="well">
+	<%= link_to "New Person", new_person_path, class: "btn btn-primary" %>
+</div>
+
+<% if flash[:notice] %>
+	<div class="alert alert-success"><%= flash[:notice] %></div>
+<% end %>
+
+<table class="table table-bordered table-striped">
+	<thead>
+		<tr>
+			<th>First Name</th>
+			<th>Last Name</th>
+			<th>Email</th>
+			<th>Notes</th>
+			<th>&nbsp;</th>
+			<th>&nbsp;</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% if @people.size == 0 %>
+			<tr>
+				<td colspan="6">No people found.</td>
+			</tr>
+		<% else %>
+			<% @people.each do |person| %>
+				<tr>
+					<td><%= person.first_name %></td>
+					<td><%= person.last_name %></td>
+					<td><%= person.email %></td>
+					<td><%= person.notes %></td>
+					<td>
+						<%= link_to "Edit", edit_person_path(person), class: "btn btn-default" %>
+					</td>
+					<td>
+						<%= button_to "Delete", person, method: :delete, data: { confirm: "Are you sure you wish to delete #{person.first_name} #{person.last_name}?" }, class: "btn btn-danger" %>
+					</td>
+				</tr>
+			<% end %>
+		<% end %>
+	</tbody>
+</table>
+
+- Great! Now if we start our Rails server using the rails s command and navigate to our rails development site at https://localhost:3000 
+we will find that we have a fully simple, functioning app using MongoDB.
+
+
+
+
+
+

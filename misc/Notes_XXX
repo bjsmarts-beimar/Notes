@@ -1,0 +1,7 @@
+
+
+rails _4.2.6_ new rspecApp --skip-bundle --skip-test-unit
+
+group :test, :development do
+   gem 'rspec-rails', '~> 2.14.0'  #RSpec 3.x has a problem with Capybara 2.4.1
+end

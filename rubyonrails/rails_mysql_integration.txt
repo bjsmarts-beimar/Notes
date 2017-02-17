@@ -1,0 +1,70 @@
+
+
+Install MySQL Server on AWS Linux Server
+========================================
+To connect to AWS Linux Server
+> ssh -i access.pem ubuntu@ec2-54-172-133-201.compute-1.amazonaws.com
+Type the following commands:
+
+> sudo apt-get update
+> sudo apt-get install mysql-server
+> sudo apt-get install mysql-server mysql-client libmysqlclient-dev
+> sudo mysql_install_db
+> sudo mysql_secure_installation
+
+To login into mysql enter the following command
+> mysql -uroot -pmysql
+> show databases
+
+Install the gem for mysql, run the following command
+
+> gem install mysql2
+
+Test the installation by creating a test project
+> rails new MySqlApp -d mysql
+
+Add 'devise' to your Gemfile with:
+
+> gem 'devise'
+> bundle install
+
+Run the following commands to create the User Model: 
+
+> rails generate devise:install
+> rails generate devise User
+> rake db:create
+> rake db:migrate
+
+Install MySQL on Mac OS
+=======================
+Go to www.mysql.com and download DMG file
+
+root@localhost: pQ.4SqHy9e2&      mysql
+
+Start the MySQL Server
+> /usr/local/mysql/bin/mysql -u root -p 
+> show databases
+
+Install the gem for mysql, run the following command
+
+> gem install mysql2
+
+Test the installation by creating a test project
+> rails new MySqlApp -d mysql
+
+Add 'devise' to your Gemfile with:
+
+> gem 'devise'
+> bundle install
+
+Run the following commands to create the User Model: 
+
+> rails generate devise:install
+> rails generate devise User
+> rake db:create
+> rake db:migrate 
+
+
+
+
+

@@ -1,0 +1,52 @@
+. Install Nodejs
+
+> brew install node
+
+. Express 
+
+Express Web Development Framework for Node.js
+
+. Create Sample NODEJS App
+> npm init 
+> touch index.js
+
+. add Express 
+> npm install express --save
+
+NPM Versioning
+==============
+^ Ex: ^4.13.3 install any mayor version
+~ Ex: ~4.13.x  install any minor version
+
+START EXPRES App
+================
+. Open Index.js
+
+var express = require('express');
+var app = express();
+var port = 5000;
+
+app.get('/', function(req, res) {
+    res.send('Hello World');
+});
+
+app.listen(port, function(err) {
+    console.log('running server on port' + port);
+});
+
+. Open package.json
+"start": "node index.js"
+
+. Remove node_modules
+> rm -fr node_modules
+
+. start application
+> npm start
+
+
+
+
+
+
+
+

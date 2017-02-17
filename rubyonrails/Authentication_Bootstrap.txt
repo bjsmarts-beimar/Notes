@@ -1,0 +1,51 @@
+Authentication with Bootstrap in Rails
+=============================================
+
+1. create your project > rails new userBootstrapApp
+
+2. create Home Page using the following command > rails generate controller Home index.  Update routing
+
+> rails generate controller Home index
+
+edit config/route.rb
+root 'Home#index'
+
+3. Add 'devise' to your Gemfile with:
+
+gem 'devise'
+gem 'twitter-bootstrap-rails'
+gem 'devise-bootstrap-views' 
+
+bundle install
+
+4. Run the following commands to create the User Model: 
+
+$ rails generate devise:install
+$ rails generate devise User
+$ rake db:migrate
+
+5. Edit the following files: 
+
+app/controllers/application_controller.rb : 
+   before_action :authenticate_user!
+
+add the logout link to the home page
+<%= link_to "logout", destroy_user_session_path, method: :delete %>
+
+6. Run the following command to add Bootstrap
+
+> rails generate bootstrap:install static
+> rails generate bootstrap:layout application
+
+7. Edit app/assets/stylesheets/application.css, add the following
+
+> *= require devise_bootstrap_views
+
+8. Run the following commands to update the views:
+
+> rails generate devise:views:locale en
+> rails generate devise:views:bootstrap_templates
+
+
+
+

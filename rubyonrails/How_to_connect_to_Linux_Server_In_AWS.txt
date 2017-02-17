@@ -1,0 +1,42 @@
+How to connect to Linux Server in AWS
+=====================================
+
+
+- To connect to AWS Linux Server
+
+ssh -i access.pem ubuntu@ec2-54-172-133-201.compute-1.amazonaws.com
+
+
+
+- If you want to switch to a root shell once you are logged in to the “ubuntu” user, simply use the command:
+
+sudo -i
+
+- install RVM on Ubuntu AWS run the following two commands
+
+> gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+> \curl -sSL https://get.rvm.io | bash -s stable
+
+- install rails 
+
+> gem install rails
+
+- install node.js
+ 
+> sudo apt-get install nodejs
+
+- Create security group have a rule for TCP 3000.Then, you can use the Public DNS:
+
+> rails server -b ec2-54-172-133-201.compute-1.amazonaws.com -p 3000
+
+> d
+
+- And access to: ec2-XX-XX-XX-XX.us-west-2.compute.amazonaws.com:3000
+
+Error:
+
+requires Ruby version >= 2.0.
+
+Solution
+$ rvm list
+$ rvm use ruby-2.3.0

@@ -1,0 +1,88 @@
+Building Rails4 App with Rails and AngularJS
+============================================
+
+1. Create rails project
+
+> rails new SimplaSPA
+
+2. Create Home controller
+
+> rails g controller Home index
+
+3. In Gemfile add these two gems.
+
+gem 'angularjs-rails'
+gem 'angular-ui-bootstrap-rails' #for bootstrap UI
+
+4. Setup layout
+
+Adding ng-app and ng-view indicates that we have an AngularJS app in the page.
+
+<html ng-app="myapplication">
+ <head>
+   <title>Application Name</title>
+   <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
+   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+   <%= csrf_meta_tags %>
+ </head>
+ <body>
+   <div class="container" ng-view>
+     <%= yield %>
+   </div>
+ </body>
+</html>
+
+5. Create Angular Main App
+
+First let’s create a directory for our controllers. You can name it whatever you want.
+
+$ mkdir -p app/assets/javascripts/angular/
+$ touch app/assets/javascripts/angular/App.js 
+
+var myApp = angular.module('myapplication', ['ngRoute', 'ngResource']); 
+
+myApp.controller('GreetingController', ['$scope', function($scope) {
+  $scope.greeting = 'Welcome Ruby + API + Angular + Bootstrap !!!';
+}]);
+
+//Routes
+myApp.config([
+  '$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+    $routeProvider.when('/home',{
+      templateUrl: '/home/index.html',
+      controller: 'GreetingController'
+    });
+    $routeProvider.otherwise({
+      redirectTo: '/home'
+    });
+  }
+]);
+
+6. Create Angular Template Files
+
+$ mkdir public/home
+$ touch public/home/index.html
+
+<h1>{{greeting}}</h1>
+
+6. Update Rails routing file => config/routes.rb
+
+Add the following:
+
+  resources :home
+
+  root 'home#index'
+
+7. Update Javascript Rails File => app/assets/javascripts/application.js 
+
+Add the following:
+
+//= require angular
+//= require angular-route
+//= require angular-resource
+//= require angular-ui-bootstrap
+//= require turbolinks
+//= require_tree .
+
+
+

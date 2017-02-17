@@ -1,0 +1,61 @@
+
+Update your $PATH to run sublime for the command line:
+
+PATH=$PATH:/Users/beimar/bin
+
+RUBY IS OPEN SOURCE PROGRAMMING LANGUAGE THAT IT IS SIMPLE AND PRODUCTIVE
+FOCUS IN SIMPLICITY AND PRODUCTIVITY
+
+Ruby Naming Conventions
+=======================
+
+1. Instances Variables starts with @ prefix
+   example > @my_instance
+2. Class variables starts with @@ prefix
+   example > @@my_class_variable
+3. Global variable starts with $ prefix
+   example > $my_global
+4. Contants starts with UPPER_CASE
+5. Local variable starts with lower_case6'  
+
+Ruby Types
+==========
+String
+Number
+
+Symbol -> optimize version of String
+   example ->   :my_symbol
+   example ->   :name => 'test'
+Symbols vs. Strings
+use Symbol cause doesn't consume memory space strings will
+
+Where do Symbols used?
+
+Example: 
+			Hash keys (:name=>'Brian', :hobby=>'golf')
+			Arguments of a method (:name, :title)
+			Method name (:post_comments)
+
+Array
+
+Hash
+
+Example =>
+		hash_one = Hash.new
+		hash_two = {}
+		hash_three = {"a"=>1, "b"=>2, "c"=>3}
+		hash_four = {:a=>1, :b=>2, :c=>3}
+		hash_five = {a:1, b:2, c:3}
+
+Ruby Classes
+============
+
+The initialize method in Ruby is like constructor in Java or C#
+
+class MyClass
+	def initialize(parameters)
+
+	end
+end
+
+
