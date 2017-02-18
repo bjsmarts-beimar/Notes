@@ -30,6 +30,9 @@ app.listen(port, function(err) {
 . if an error is thrown when executing npm start, remove node_modules
 > rm -fr node_modules
 
+Installing bootstrap
+====================
+
 . download the following bootstrap template
 https://www.bootstrapzero.com/bootstrap-template/storystrap
 
