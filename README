@@ -13,3 +13,10 @@ Push changes to github
 . git add .
 . git commit -a -m "comments"
 . git push -u origin master 
+
+Get latest code from Repository
+===============================
+. git fetch origin
+. git status
+. git pull
+
