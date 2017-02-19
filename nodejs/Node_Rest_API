@@ -52,7 +52,8 @@ console.log('REST API Server listen on port ' + port);
 
 . Connect to MongoDb, add the following lines:
 
-
+var mongoose   = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/TestDb');
 
 . Create app/ folder
 . Create app/models folder
