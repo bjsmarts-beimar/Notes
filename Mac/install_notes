@@ -1,0 +1,32 @@
+                        MAC DEV TOOLS Install
+                        =====================
+
+1. Install Homebrew
+
+https://brew.sh/
+
+2. Install XCode
+
+Go to the playstore and Install XCode
+
+
+Install RVM
+curl -L https://get.rvm.io | bash -s stable --auto-dotfiles --autolibs=enable --rails
+
+3. Install Ruby
+
+> brew install rbenv ruby-build
+
+# Add rbenv to bash so that it loads every time you open a terminal
+> echo 'if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi' >> ~/.bash_profile
+> source ~/.bash_profile
+
+# Install Ruby
+> rbenv install 2.4.0
+> rbenv global 2.4.0
+> ruby -v
+
+4. Install Git
+
+> brew install Git
+

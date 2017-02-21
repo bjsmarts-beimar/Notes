@@ -1,0 +1,30 @@
+Angular Main Components
+=======================
+
+Templates
+Expressions
+Directives
+Modules
+Controllers
+Scopes
+Models
+Dependency Injection
+Data Binding
+Routing
+Filters
+Forms
+Validations
+Services
+Bootstrapping
+
+
+Expressions =>  javascript code
+
+Directives => extends HTML attributes with the prefix ng
+
+ng-app => Initialize a AngularJS Application
+ng-init => Initialize application data
+ng-model => binds the value of HTML controls to application data
+ng-bind => replace text content of the specified HTML
+ng-repeat => HTML for each
+ng-click => HTML click

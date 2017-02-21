@@ -58,7 +58,7 @@ app.listen(port);
 console.log('REST API Server listen on port ' + port);
 
 . Open package.json
-"start": "node index.js"
+"start": "node server.js"
 
 . Connect to MongoDb, add the following lines:
 
@@ -189,7 +189,26 @@ HTTP Verb: DELETE  Route: /api/seasons/:id
 ===========================================================
  CLIENT IMPLEMENTATION
 ===========================================================
-. Create Angular 2 client project
-> ng new client
+
+
+CLIENT 1 ANGULAR CLI https://github.com/angular/angular-cli/
+============================================================
+. install the angular cli using npm 
+npm install -g @angular/cli
+
+. test installation type: ng serve
+
+
+
+CLIENT 2 https://github.com/DeborahK/Angular2-GettingStarted/
+=============================================================
+. install custom angular project
+git clone https://github.com/DeborahK/Angular2-GettingStarted/
+
+. extract started project folder
+
+. run npm install and npm start
+
+
 
 
