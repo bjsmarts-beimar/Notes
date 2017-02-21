@@ -1,0 +1,505 @@
+================================================================
+ INITIAL SETUP
+================================================================
+
+1. Create "Vitas.Core.eReferralV2" ASP.NET Core Project using "ASP.NET Core Web Application(.NET Framework) Web API" Template with no Authentication 
+
+2. add the following middleware to the project.json file
+
+"Microsoft.AspNetCore.Diagnostics": "1.0.0", 
+"Microsoft.AspNetCore.Routing": "1.0.0", 
+"Microsoft.AspNetCore.Authentication.JwtBearer": "1.0.0", 
+"Microsoft.AspNetCore.StaticFiles": "1.0.0", 
+"Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0"
+
+3. open Startup.cs and add the following code to serve static files before app.UseMvc();
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+4. move the Project_Readme.html to wwwroot folder 
+
+5. Set port number to 14600
+
+6. run the project to test if you can open Project_Readme.html
+
+7. add Newtonsoft.Json Library to the Project.  Open the Nuget Console App and run the following command:
+  "Install-Package Newtonsoft.Json -Version 9.0.1"
+
+SETUP TYPESCRIPT
+
+1. To set up TypeScript you have to add a tsconfig.json file to our root project
+
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "module": "system",
+    "moduleResolution": "node",
+    "noImplicitAny": false,    
+    "noEmitOnError": true,
+    "removeComments": false,
+    "sourceMap": true,
+    "target": "es5"
+  },
+  "exclude": [
+    "node_modules",
+    "wwwroot"
+  ]
+}
+
+2. Add NPM Configuration file "package.json"
+
+{
+  "version": "1.0.0",
+  "name": "VitasCoreReferralV2",
+  "private": true,
+  "devDependencies": {
+    "gulp": "^ 3.9.1",
+    "gulp-clean": "^ 0.3.2",
+    "gulp-concat": "^ 2.6.0",
+    "gulp-sourcemaps": "^ 1.6.0",
+    "gulp-typescript": "^ 2.13.6",
+    "gulp-uglify": "^ 2.0.0",
+    "typescript": "^ 1.8.10"
+  }
+}
+
+3. Add Gulp Configuration file "gulpfile.js"
+
+var gulp = require('gulp'),
+gp_clean = require('gulp-clean'),
+gp_concat = require('gulp-concat'),
+gp_sourcemaps = require('gulp-sourcemaps'),
+gp_typescript = require('gulp-typescript'),
+gp_uglify = require('gulp-uglify');
+
+/// Define paths 
+var srcPaths = {
+    app: ['Scripts/ app/ main.ts', 'Scripts/ app/**/*. ts'],
+    js: ['Scripts/ js/**/*. js']
+};
+
+var destPaths = {
+    app: 'wwwroot/ app/',
+    js: 'wwwroot/ js/'
+};
+
+// Compile, minify and create sourcemaps all TypeScript files and place them to wwwroot/ app, together with their js.map files.
+
+gulp.task('app', ['app_clean'], function () {
+    return gulp.src(srcPaths.app)
+    .pipe(gp_sourcemaps.init())
+    .pipe(gp_typescript(require('./tsconfig.json').compilerOptions))
+    .pipe(gp_uglify({ mangle: false }))
+    .pipe(gp_sourcemaps.write('/'))
+    .pipe(gulp.dest(destPaths.app));
+});
+
+// Delete wwwroot/ app contents 
+gulp.task('app_clean', function () {
+    return gulp.src(destPaths.app + "*", { read: false })
+    .pipe(gp_clean({ force: true }));
+});
+
+// Copy all JS files from external libraries to wwwroot/ js 
+gulp.task('js', function () {
+    return gulp.src(srcPaths.js)
+    // .pipe( gp_uglify({ mangle: false })) // disable uglify 
+    // .pipe( gp_concat(' all-js.min.js')) // disable concat 
+    .pipe(gulp.dest(destPaths.js));
+});
+
+// Delete wwwroot/ js contents 
+gulp.task('js_clean', function () {
+    return gulp.src(destPaths.js + "*", { read: false })
+    .pipe(gp_clean({ force: true }));
+});
+
+// Watch specified files and define what to do upon file changes 
+gulp.task('watch', function () {
+    gulp.watch([srcPaths.app, srcPaths.js], ['app', 'js']);
+});
+
+// Global cleanup task 
+gulp.task('cleanup', ['app_clean', 'js_clean']);
+
+// Define the default task so it will launch all other tasks 
+gulp.task('default', ['app', 'js', 'watch']);
+
+SETUP ANGULARJS 2
+
+1. Add the following to package.json
+
+"dependencies": {
+    "@angular/common": "2.0.0-rc.5",
+    "@angular/compiler": "2.0.0-rc.5",
+    "@angular/core": "2.0.0-rc.5",
+    "@angular/http": "2.0.0-rc.5",
+    "@angular/platform-browser": "2.0.0-rc.5",
+    "@angular/platform-browser-dynamic": "2.0.0-rc.5",
+    "@angular/upgrade": "2.0.0-rc.5",
+
+    "core-js": "^2.4.1",
+    "reflect-metadata": "^0.1.8",
+    "rxjs": "5.0.0-beta.6",
+    "systemjs": "^0.19.37",    
+    "zone.js": "^0.6.12"
+  },
+
+
+2. Modify srcPaths on the "gulpfile.js"
+
+/// Define paths
+var srcPaths = {
+    app: ['Scripts/app/main.ts', 'Scripts/app/**/*.ts'],
+    js: [
+        'Scripts/js/**/*.js',
+        'node_modules/core-js/client/shim.min.js',
+        'node_modules/zone.js/dist/zone.js',
+        'node_modules/reflect-metadata/Reflect.js',
+        'node_modules/systemjs/dist/system.src.js',
+        'node_modules/typescript/lib/typescript.js'
+    ],
+    js_angular: [
+        'node_modules/@angular/**'
+    ],
+    js_rxjs: [
+        'node_modules/rxjs/**'
+    ]
+};
+
+3. Modify destPaths on the "gulpfile.js"
+
+var destPaths = {
+    app: 'wwwroot/app/',
+    js: 'wwwroot/js/',
+    js_angular: 'wwwroot/js/@angular/',
+    js_rxjs: 'wwwroot/js/rxjs/'
+};
+
+4. Modify how to copy js files from external libraries to wwwroot/js on the "gulpfile.js"
+
+// Copy all JS files from external libraries to wwwroot/js
+gulp.task('js', function () {
+    gulp.src(srcPaths.js_angular)
+        .pipe(gulp.dest(destPaths.js_angular));
+    gulp.src(srcPaths.js_rxjs)
+        .pipe(gulp.dest(destPaths.js_rxjs));
+    return gulp.src(srcPaths.js)
+        .pipe(gulp.dest(destPaths.js));
+});
+
+5. Adding typings to package.json
+
+	a. Add the following line to "dependencies" section
+	"typings": "^1.3.2",
+
+	b.Add the following lines to end 
+
+	"scripts": {
+		"postinstall": "typings install dt~core-js --global"
+	}
+
+6. Create "Scripts/app" folder
+
+7. An Angular 2 component file: Scripts/app/app.component.ts 
+
+import {Component} from "@angular/core";
+
+@Component({
+    selector: "eReferralV2",
+    template: `<h1>eReferral Core V2</h1><div>... is coming!</div>`
+})
+
+export class AppComponent { }
+
+9. An Angular 2 module file: Scripts/app/app.module.ts 
+
+///<reference path="../../typings/index.d.ts"/>
+import {NgModule} from "@angular/core";
+import {BrowserModule} from "@angular/platform-browser";
+import {HttpModule} from "@angular/http";
+import "rxjs/Rx";
+
+import {AppComponent} from "./app.component";
+
+@NgModule({
+    // directives, components, and pipes
+    declarations: [
+        AppComponent
+    ],
+    // modules
+    imports: [
+        BrowserModule,
+        HttpModule
+    ],
+    // providers
+    providers: [
+    ],
+    bootstrap: [
+        AppComponent
+    ]
+})
+export class AppModule { }
+
+10. An Angular 2 bootstrap file: Scripts/app/main.ts 
+
+import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
+import {AppModule} from "./app.module";
+
+platformBrowserDynamic().bootstrapModule(AppModule);
+
+
+11. A module loader configuration file: wwwroot/systemjs.config.js
+
+(function (global) {
+    // map tells the System loader where to look for things
+    var map = {
+        'app': 'app', // our application files
+        '@angular': 'js/@angular', // angular2 packages
+        'rxjs': 'js/rxjs' // Rxjs package
+    };
+
+    // packages tells the System loader which filename and/or extensions to look for by default (when none are specified)
+    var packages = {
+        'app': { main: 'main.js', defaultExtension: 'js' },
+        'rxjs': { defaultExtension: 'js' }
+    };
+
+    // configure @angular packages
+    var ngPackageNames = [
+      'common',
+      'compiler',
+      'core',
+      'http',
+      'platform-browser',
+      'platform-browser-dynamic',
+      'upgrade',
+    ];
+
+    function packIndex(pkgName) {
+        packages['@angular/' + pkgName] = { main: 'index.js', defaultExtension: 'js' };
+    }
+
+    function packUmd(pkgName) {
+        packages['@angular/' + pkgName] = { main: '/bundles/' + pkgName + '.umd.js', defaultExtension: 'js' };
+    };
+
+    var setPackageConfig = System.packageWithIndex ? packIndex : packUmd;
+    ngPackageNames.forEach(setPackageConfig);
+    var config = {
+        map: map,
+        packages: packages
+    }
+    System.config(config);
+})(this);
+
+
+
+12. Add the index.html
+
+<!DOCTYPE html>
+<html>
+<head>
+    <base href="/">
+    <title>eReferralV2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Step 1. Load libraries -->
+    <!-- Polyfill(s) for older browsers -->
+    <script src="js/shim.min.js"></script>
+    <script src="js/zone.js"></script>
+    <script src="js/Reflect.js"></script>
+    <script src="js/system.src.js"></script>
+
+    <!-- Step 2. Configure SystemJS -->
+    <script src="systemjs.config.js"></script>
+    <script>
+        System.import('app').catch(function (err) { console.error(err); });
+    </script>
+</head>
+
+<!-- Step 3. Display the application -->
+<body>
+    <!-- Application PlaceHolder -->
+    <eReferralV2>Loading...</eReferralV2>
+</body>
+</html>
+
+
+13. Set main entry point to index.html.  Go to Solution Explorer, 
+right-click Properties, Debug tab and change "Launch URL".
+
+===========================================================================================
+ ADD INITIAL BOOTSTRAP NAVIGATION
+===========================================================================================
+
+
+1. Open the gulpfile.js and the "html" task
+
+//copy all html files to wwwroot folder
+gulp.task("html", function () {
+    gulp.src(srcPaths.html + "**/*.html")
+        .pipe(gulp.dest('wwwroot/'));
+});
+
+2. Update the default task to load "html" task too.
+
+// Define the default task so it will launch all other tasks 
+gulp.task('default', ['app', 'html', 'js', 'watch']);
+
+3. Update package.json to add Angular Routing and Forms Reference
+
+    "@angular/forms": "2.0.0-rc.6",
+    "@angular/router": "3.0.0-rc.1",
+
+4. Update system.config.js to add routing and forms reference to angular packages
+
+      // configure @angular packages
+    var ngPackageNames = [
+      'common',
+      'compiler',
+      'core',
+      'http',
+      'platform-browser',
+      'platform-browser-dynamic',
+      'upgrade',
+      'forms',
+      'router',
+    ];
+
+5. Add the following folders "Script/app/dashboard" and "Script/app/uploads"
+
+6. Add the dashboard.component.html to "Script/app/dashboard" folder
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        {{pageTitle}}
+    </div>
+    <div class="panel-body">
+        
+    </div>
+</div>
+
+7. Add dashboard.component.ts to "Script/app/dashboard" folder
+
+import { Component } from '@angular/core';
+
+@Component({
+    templateUrl: 'app/dashboard/dashboard.component.html'
+})
+
+export class DashboardComponent {
+	public pageTitle: string = 'eReferral Dashboard';
+}
+
+8. Add the uploads.component.html to "Script/app/uploads" folder
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        {{pageTitle}}
+    </div>
+    <div class="panel-body">
+        
+    </div>
+</div>
+
+9. Add uploads.component.ts to "Script/app/uploads" folder
+
+import { Component } from '@angular/core';
+
+@Component({
+    templateUrl: 'app/uploads/uploads.component.html'
+})
+
+
+export class UploadsComponent {
+	public pageTitle: string = 'Upload Document(s)';
+}
+
+10. Update app.module.ts
+
+///<reference path="../../typings/index.d.ts"/>
+import {NgModule} from "@angular/core";
+import {BrowserModule} from "@angular/platform-browser";
+import {HttpModule} from "@angular/http";
+import {FormsModule} from "@angular/forms";
+import {RouterModule} from "@angular/router";
+import "rxjs/Rx";
+
+import {AppComponent} from "./app.component";
+import {DashboardComponent} from './dashboard/dashboard.component';
+import {UploadsComponent} from './uploads/uploads.component';
+
+@NgModule({
+    // directives, components, and pipes
+    declarations: [
+        AppComponent,
+        DashboardComponent,
+        UploadsComponent
+    ],
+    // modules
+    imports: [
+        BrowserModule,
+        HttpModule,
+        FormsModule,
+        RouterModule.forRoot([
+
+            { path: 'dashboard', component: DashboardComponent },
+
+            { path: 'uploads', component: UploadsComponent },
+
+            { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+
+            { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }
+
+        ]),
+    ],
+    // providers
+    providers: [
+    ],
+    bootstrap: [
+        AppComponent
+    ]
+})
+export class AppModule { }
+
+11. Add the Navigation to app.Components.ts 
+
+import {Component} from "@angular/core";
+
+@Component({
+    selector: "eReferralV2",
+    template: `
+     <div>
+        <nav class='navbar navbar-default'>
+            <div class='container-fluid'>
+                <a class='navbar-brand'>{{pageTitle}}</a>
+                <ul class='nav navbar-nav'>
+                    <li><a [routerLink]="['/dashboard']">Home</a></li>
+                    <li><a [routerLink]="['/uploads']">Upload Page</a></li>
+                </ul>
+             </div>
+        </nav>
+        <div class='container'>
+            <router-outlet></router-outlet>
+        </div>
+     </div>
+    `
+})
+export class AppComponent {
+    pageTitle: string = 'eReferral v.2.0';
+}
+
+12. Add Bootstrap Reference to package.json 
+
+	"bootstrap": "^3.3.6",
+	"bootswatch": "^3.3.6"
+
+13. Add Bootstrap Reference to index.html
+
+<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" integrity="sha384-zF4BRsG/fLiTGfR9QL82DrilZxrwgY/+du4p/c7J72zZj+FLYq4zY00RylP9ZjiT" crossorigin="anonymous">
+
+
