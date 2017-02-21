@@ -40,16 +40,20 @@ add the following to migration file:
     t.string   "twitter"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "relationship"
 
  Run the following commands =>
 
  rake db:create
  rake db:migrate
 
- connec to db:
+ go to the "db" folder and type the following command:
 
- insert into contacts (name, email, twitter) values ('John Smith', 'john@yahoo.com', 'twitter');
+ > sqlite3 development.sqlite3
+
+ type the following sql command at the prompt
+
+ insert into contacts (name, email, twitter, created_at, update_at) 
+ values ('John Smith', 'john@yahoo.com', 'twitter', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 
 8. Create the Controller for the Model 
