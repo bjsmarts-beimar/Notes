@@ -20,3 +20,7 @@ Get latest code from Repository
 . git status
 . git pull
 
+Get the Repository
+==================
+git clone https://github.com/bjsmarts-beimar/club_finder.git
+
