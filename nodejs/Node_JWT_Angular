@@ -1,0 +1,162 @@
+
+
+===================================================================
+ INITIAL CLIENT IMPLEMENTATION
+===================================================================
+
+. Install grunt bower generator angular
+> npm install -g grunt-cli bower yo generator-karma generator-angular
+
+. generate the project
+> yo angular
+
+. Run the application to test the initial setup.
+> grunt 
+> grunt serve
+
+. Create view
+yo angular:view register
+
+. Install angular UI Router
+bower install angular-ui-router --save
+
+. add the Application Configuration file app.config.js to the project
+
+. add the following code to app.config.js file
+
+angular.module('jwtAppApp').config(function($urlRouterProvider, $stateProvider) {
+    $urlRouterProvider.otherwise('/');
+    $stateProvider
+    .state('main', {
+        url: '/',
+        templateUrl: '/views/main.html'
+    })
+    .state('register', {
+        url: '/register',
+        templateUrl: '/views/register.html',
+        controller: 'RegisterCtrl'
+    });
+})
+
+. remove ng-include and add ui-view on index.html
+
+<div ui-view></div>
+<div ng-include="'views/main.html'" ng-controller="MainCtrl"></div>
+
+. Modify the Navigation
+
+    <ul class="nav navbar-nav">
+        <li ui-sref-active="active"><a ui-sref="main">Home</a></li>
+        <li ui-sref-active="active"><a ui-sref="register">Register</a></li>
+    </ul>
+. 
+
+. Add the register controller
+yo angular:controller register
+
+. Add the following code
+'use strict';
+
+angular.module('jwtAppApp')
+  .controller('RegisterCtrl', function () {
+    $scope.submit = function() {
+      console.log("test");
+    }
+  });
+
+. add Alerts to the Application
+> bower install angular-toastr --save
+
+toastr.success("register successfully");
+toastr.error("Failed to register");
+
+. Modify the Controller code
+
+
+'use strict';
+
+angular.module('jwtAppApp')
+  .controller('RegisterCtrl', function ($scope, $http, toastr) {
+    $scope.submit = function() {
+      var url = 'http://localhost:3000/register';
+      var user = {
+        name: 'Alex'
+      };
+      
+      $http
+        .post(url, user)
+        .then(function(res) {
+           //toastr.success("register successfully");
+           toastr.success("You have registered successfully", "Register Status", {
+             positionClass: 'toast-bottom-full-width'
+           })
+        }, function(err) {
+           toastr.error("Failed register, Please contact you Administrator", "Register Status", {
+             positionClass: 'toast-bottom-full-width'
+           })
+        });
+    }
+  });
+
+=========================================================================
+ INITIAL SERVER IMPLEMENTATION
+=========================================================================
+
+. Create "FrontEnd" folder and copy all files but .git files 
+
+. Create "Api" Folder 
+
+. Go inside "Api" folder
+
+. run "> npm init" to initialize "nodejs" project
+
+. run "touch api.js"
+
+. add Express, mongoose, body-parser 
+> npm install express mongoose body-parser --save
+
+. open api.js and add the following code
+
+// call the packages we need
+var express    = require('express');        // call express
+var app        = express();                 // define our app using express
+var bodyParser = require('body-parser');
+
+// configure app to use bodyParser()
+// this will let us get the data from a POST
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+var port = process.env.PORT || 3000;        // set our port
+
+//middleware goes here
+app.use(function(req, res, next) {
+    // adding CORS
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    console.log('Cors has been added.');
+    
+    next(); // make sure we go to the next routes and don't stop here
+});
+
+// more routes for our API will happen here
+app.post('/register', function(req, res) {
+    console.log(req.body);
+    res.send("hi");
+})
+
+// START THE SERVER
+// =============================================================================
+app.listen(port);
+console.log('REST API Server listen on port ' + port);
+
+. Open package.json
+"start": "node api.js"
+
+. Test the Initial Setup
+
+
+    
+
+
