@@ -1,0 +1,194 @@
+1. Install the following Nuget Packages
+
+Install-Package Microsoft.EntityFrameworkCore
+Install-Package Microsoft.EntityFrameworkCore.SqlServer
+
+2. Create the "Models" Folder and the "Model.cs" class file
+
+public class ApplicationDbContext : DbContext
+    {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
+        {
+            Database.EnsureCreated();
+        }
+
+        public DbSet<eReferralV2Fax> eReferralV2Fax { get; set; }
+        public DbSet<eReferralV2FaxType> eReferralV2FaxType { get; set; }
+        public DbSet<eReferralV2Stream> eReferralV2Stream { get; set; }
+        public DbSet<eReferralV2TimeZones> eReferralV2TimeZones { get; set; }
+    }
+
+public class eReferralV2Fax
+    {
+        public int eReferralV2FaxId { get; set; }
+
+        [Required]
+        public string Name { get; set; }
+
+        public string Region { get; set; }
+
+        public string Type { get; set; }
+
+        public string XML { get; set; }
+    }
+
+public class eReferralV2FaxType
+    {
+        public int eReferralV2FaxTypeId { get; set; }
+        [Required]
+        public string Name { get; set; }
+
+        public byte[] Image { get; set; }
+    }
+
+public class eReferralV2Stream
+    {
+        public int eReferralV2StreamId { get; set; }
+
+        public byte[] eStream { get; set; }
+
+        public int eFaxId { get; set; }
+    }
+
+public class eReferralV2TimeZones
+    {
+        public int eReferralV2TimeZonesId { get; set; }
+        [Required]
+        public string Name { get; set; }
+        public string Region { get; set; }
+        public float RegionValue { get; set; }
+    }
+
+public enum eReferralV2TaskFaxType
+    {
+        Pending,
+        Medical,
+        Submitted,
+        Split,
+        Reject,
+        Consent
+    }
+
+    public enum eReferralV2Prefix
+    {
+        Dr,
+        Miss,
+        Mr,
+        Mrs,
+        Ms,
+        Prof,
+        Rev,
+        Sir,
+        Sr
+    }
+
+    public enum eReferralV2Suffix
+    {
+        first,
+        second,
+        third,
+        fourth,
+        I,
+        II,
+        III,
+        IM,
+        IV,
+        Jr,
+        Sr
+    }
+
+    public enum eReferralV2Gender
+    {
+        none,
+        male,
+        female
+    }
+
+    public class eReferralV2Task
+    {
+        public int eReferralV2TaskId { get; set; }
+
+        public byte[] Image { get; set; }
+
+        [Required]
+        public string Name { get; set; }
+
+        public int eFaxId { get; set; }
+
+        public string callCenter { get; set; }
+
+        public string firstName { get; set; }
+
+        public string lastName { get; set; }
+
+        public string middleName { get; set; }
+
+        public string createdBy { get; set; }
+
+        public string createdByfullName { get; set; }
+
+        public DateTime? created { get; set; }
+
+        public string modifiedBy { get; set; }
+
+        public string modifiedByfullName { get; set; }
+
+        public DateTime? modified { get; set; }
+
+        public eReferralV2TaskFaxType faxType { get; set; }
+
+        public eReferralV2Prefix prefix { get; set; }
+
+        public eReferralV2Suffix suffix { get; set; }
+
+        public DateTime? dob { get; set; }
+
+        public string ssn { get; set; }
+
+        public eReferralV2Gender gender { get; set; }
+
+        public string patientId { get; set; }
+
+        public string program { get; set; }
+
+        public string Patient { get; set; }
+    }
+
+3. Add the connection string to appsettings.json
+
+"ConnectionStrings": {
+    "DefaultConnection": "Server=PC-SP20131;Database=eReferralV2Test;User Id=sa;Password=P@ss(0)d!;"
+  },
+
+4. Open Startup.cs file and inject the DbContext class on "ConfigureServices" method
+
+	    // Add framework services => Entity Framework Database Context for Sql Server
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+5. Create "eReferralV2FaxController" Controller Class and copy the generated code
+6. Create "eReferralV2TimeZonesController" Controller Class and copy the generated code
+7. Create "eReferralV2TaskController" Controller Class and copy the generated code
+8. Create "eReferralV2StreamController" Controller Class and copy the generated code
+9. Create "eReferralV2FaxTypeController" Controller Class and copy the generated code
+10. Create "eReferralV2RelatioshipController" Controller Class and copy the generated code
+
+11. Add CORS Policy to the project, Open the Startup.cs file and the following code to "ConfigureServices" Method
+
+// Add framework services => CORS Policy
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
+
+12. Also add the following code to "Configure" Method
+
+//global policy - assign here or on each controller
+            app.UseCors("CorsPolicy");
+
+
