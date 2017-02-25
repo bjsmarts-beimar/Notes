@@ -1,0 +1,237 @@
+ASP.NET WEB API
+
+. Open Visual Studio and create Web API Project "eReferralV2" with Authentication Activated
+
+. Add "eReferralUserIdentityController" Empty Controller
+
+. Add Reference to System.DirectoryServices.AccountManagement
+
+. Add the following code to the "eReferralUserIdentityController" Empty Controller
+
+	[Authorize]
+        [HttpGet]
+        [Route("api/AuthenticateUser")]
+        public List<UserInfo> AuthenticateUser()
+        {
+
+            if ( User.Identity.IsAuthenticated )
+            {
+                var Account = User.Identity.Name;
+                var firstName = "";
+                var lastName = "";
+                var ErrorMessage = "";
+
+                try
+                {
+
+                    using (var context = new PrincipalContext(ContextType.Domain))
+                    {
+                        var principal = UserPrincipal.FindByIdentity(context, User.Identity.Name);
+                        firstName = principal.GivenName;
+                        lastName = principal.Surname;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ErrorMessage = "Error has ocurred: " + ex + " Finding username fullname failed";
+                }
+
+
+                var data = new List<UserInfo>()
+                {                
+                    new UserInfo() {Id = 1, AccountName = Account, FullName = firstName + " " + lastName, ErrorMessage = ErrorMessage}
+                };
+
+                return data;
+
+            }
+            else
+            {                
+                var data = new List<UserInfo>()
+                {                
+                    new UserInfo() {Id = 1, AccountName = "", FullName = "", ErrorMessage="Error has ocurred: Not Authenticated"}
+                };
+
+                return data;
+            }            
+        }
+
+
+	public class UserInfo
+    	{        
+        	public Int32 Id {get; set; }
+        	public string AccountName { get; set; }
+        	public string FullName { get; set; }
+        	public string ErrorMessage { get; set; }
+    	}
+
+. Create the following classes: 
+
+	a. eReferralV2Fax 
+	b. eReferralV2Stream
+	c. eReferralV2Task
+	d. eReferralV2TimeZones
+
+public class eReferralV2Fax
+    {
+        public int eReferralV2FaxId { get; set; }
+
+        [Required]
+        public string Name { get; set; }
+
+        public string Region { get; set; }
+
+        public string Type { get; set; }
+
+        public string XML { get; set; }
+    }
+
+public class eReferralV2Stream
+    {
+        public int eReferralV2StreamId { get; set; }
+
+        public byte[] eStream { get; set; }
+
+        public int eFaxId { get; set; }
+    }
+
+public class eReferralV2Task
+    {
+        public int eReferralV2TaskId { get; set; }
+
+        [Required]
+        public string Name { get; set; }
+
+        public int eFaxId { get; set; }
+    }
+
+public class eReferralV2TimeZones
+    {
+	public int eReferralV2TimeZonesId { get; set; }
+	[Required]
+	public string Name { get; set; }
+	public string Region { get; set; }
+	public float RegionValue { get; set; }
+    }
+
+. Go to Nuget Console and type "Install-Package EntityFramework"
+
+. Add "eReferralV2DataContext" Data Context Class
+
+public class eReferralV2DataContext : DbContext
+    {
+        public eReferralV2DataContext()
+            : base("name=eReferralConnection")
+        {
+
+        }
+    }
+
+.  Add the following Database Connection to the Database
+
+<connectionStrings>
+    <add name="eReferralConnection" connectionString="Data Source=PC-SP20131;Initial Catalog=eReferralV2; User ID=dbInstaller; Password=4rfv5tgb^YHN&amp;UJM;" providerName="System.Data.SqlClient" />
+  </connectionStrings>
+
+<add name="eReferralConnection" connectionString="Data Source=PC-SP20131;Initial Catalog=eReferral; User ID=dbInstaller; Password=4rfv5tgb^YHN&amp;UJM;" providerName="System.Data.SqlClient" />
+
+. Go the IdentityModels.cs and change the connection name from "DefaultConnection" to "eReferralConnection"
+
+. Create the following Controllers:
+	eReferralV2FaxController
+	eReferralV2StreamController
+	eReferralV2TaskController
+	
+
+. Go to Nuget Console and type the following command "Enable-Migrations"
+. Run the following command "Add-Migration Initial"
+
+. Open Migrations\Configuration.cs file and add the following code to the "Seed" Method
+
+context.eReferralV2Fax.AddOrUpdate( a => a.Name, 
+                new eReferralV2Fax {
+                 eReferralV2FaxId = 1, Name = "Testing", Region = "Miami", Type = "AllScripts", XML = ""   
+                });
+
+context.eReferralV2TimeZones.AddOrUpdate( a => a.Name, 
+                new eReferralV2TimeZones {
+                 eReferralV2TimeZonesId = 1, Name = "Undefined", Region = "All", RegionValue = 0   
+                });
+
+context.eReferralV2TimeZones.AddOrUpdate( a => a.Name, 
+                new eReferralV2TimeZones {
+                 eReferralV2TimeZonesId = 2, Name = "CA Call Center", Region = "C9", RegionValue = -3   
+                });
+
+context.eReferralV2TimeZones.AddOrUpdate( a => a.Name, 
+                new eReferralV2TimeZones {
+                 eReferralV2TimeZonesId = 3, Name = "FL Call Center", Region = "C1", RegionValue = 0   
+                });
+
+
+
+. Run the following command "Update-Database"
+
+. Add CORS to the Project
+. Open Nuget Console and run the following command "Install-Package Microsoft.AspNet.WebApi.Cors"
+. Add the following code to Global.asax
+
+protected void Application_BeginRequest(object sender, EventArgs e)
+        {
+            if (( Context.Request.Path.Contains("api/") || Context.Request.Path.Contains("odata/")) && Context.Request.HttpMethod == "OPTIONS")
+            {
+                Context.Response.AddHeader("Access-Control-Allow-Origin", Context.Request.Headers["Origin"]);
+                Context.Response.AddHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+                Context.Response.AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+                Context.Response.AddHeader("Access-Control-Allow-Credentials", "true");
+            }
+            
+        }
+
+. Add the following code to App_Start\WebApiConfig.cs
+
+	    // Web API configuration and services
+            var cors = new EnableCorsAttribute("*", "*", "*");
+            cors.SupportsCredentials = true;
+            config.EnableCors(cors);
+
+. Add the following to web.config to the section <system.web>
+
+	<identity impersonate="false" />
+	<authentication mode="Windows" />
+    	<authorization>
+      	  <deny users="?" />
+    	</authorization>
+
+. Open App_Start\WebApiConfig.cs and add the following code to the "Register" Method 
+
+            config.Formatters.Remove(config.Formatters.XmlFormatter);
+            config.Formatters.JsonFormatter.MediaTypeMappings.Add(new QueryStringMapping("json", "true", "application/json"));
+
+. Create a Project "eReferralV2App"
+. Add "Index.html"
+
+. Go to the Nuget Console and run the following command "Install-Package jQuery"
+. Go to the Nuget Console and run the following command "Install-Package bootstrap"
+. Go to the Nuget Console and run the following command "Install-Package AngularJS.Core"
+. Go to the Nuget Console and run the following command "Install-Package Angular.UI.UI-Router"
+. Go to the Nuget Console and run the following command "Install-Package AngularJS.Resource"
+. Go to the Nuget Console and run the following command "Install-Package angular-block-ui"
+. Go to the Nuget Console and run the following command "Install-Package Angular.UI.Bootstrap -Version 0.11.0"
+. Go to the Nuget Console and run the following command "Install-Package Moment.js"
+. Go to the Nuget Console and run the following command "Install-Package MG.Packages.Angular.UI.Mask"
+
+
+npm install angular-ui-mask
+
+. Add index.html to the Project root
+
+
+
+. Add the following Files to App folder
+	. app.js
+	. controllers.js
+	. services.js
+
+.
+
