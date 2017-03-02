@@ -17,10 +17,12 @@
 . Create view
 yo angular:view register
 
-. Install angular UI Router
+. Install angular UI Router, toaster, angular-bootstrap
 bower install angular-ui-router --save
+bower install angular-bootstrap#0.11.0 --save
+bower install angular-toastr --save
 
-. Add 'ui.router' to Angular Module on app.js
+. Add 'ui.router', 'toastr', 'ui.bootstrap' to Angular Module on app.js
 
 . add the Application Configuration file app.config.js to the project
 
@@ -56,10 +58,7 @@ angular.module('jwtAppApp').config(function($urlRouterProvider, $stateProvider) 
     </ul>
 . 
 
-. Add Alerts to the Application
-> bower install angular-toastr --save
-
-. Add 'toastr' to the Angular Module on app.js
+. How to reference 'toastr' alerts
 
 toastr.success("register successfully");
 toastr.error("Failed to register");
