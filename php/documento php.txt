@@ -1,0 +1,303 @@
+****instalacion de Gnome para desktop
+# yum -y groups install "GNOME Desktop"
+# startx
+
+***** git clone, clonamos el proyecto para poder trabajarlo https://github.com/bjsmarts-beimar/marco
+# git clone https://github.com/bjsmarts-beimar/marco.git
+
+*****Instalamos mysql
+# yum install mysql mysql-server
+# mysqld start
+# mysqld status
+***https://dbahire.com/como-instalar-mysql-5-6-en-centos-7/
+***http://tecadmin.net/remove-mysql-completely-from-linux-system/#
+
+********Instalamos php version 5.6w ya que laravel en version 5.4 necesita php 5.5 o superior para poder crear sus proyectos***********
+# rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+# rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
+
+****laravel dio un problema de controladores con php70w-mbstring por lo que recomiendo instalar primero antes que el resto de las dependencias
+# yum install php70w-mbstring
+# yum install php70w php70w-opcache
+# yum install php70w-xml
+
+*** para conexion a base de datos tambien debemos agregar
+# yum install php70w-pdo
+# yum install php70w-mysql
+# yum install php70w-mcrypt
+
+/**************** para mas informacion puede revisar la siguiente pagina ya que contiene una lista de componentes de php70w :   https://webtatic.com/packages/php70/
+***** # yum install php70w php70w-opcache php70w-mcrypt php70w-pdo php70w-mysql
+
+
+
+************** instalacion de composer para poder crear proyectos laravel **************
+****para instalar composer
+[root@server ~]# cd ~
+[root@server ~]# curl -sS https://getcomposer.org/installer | php
+**** despues movemos 
+[root@server ~]# mv composer.phar /usr/local/bin/composer
+******* para mas informacion todo se encuentra en esta pagina:   http://www.agix.com.au/install-composer-on-centosredhat/
+https://www.epictrim.com/ideas/install-composer-on-centos/
+
+
+
+************* creacion de proyecto laravel con composer ******************
+# composer create-project laravel/laravel laratest
+ 
+****** instalar visual code https://code.visualstudio.com/docs/setup/linux
+
+***** create batabase
+# mysql -u root -p
+
+***** cambiar en nombre de la aplicacion
+# php artisan app:name NVSLOnline
+
+***** cambiar cadena de conexion en archivo env
+
+***** migration
+# php artisan make:migration create_divisions_table
+# php artisan make:migration create_teams_table
+# php artisan make:migration create_venues_table
+# php artisan make:migration create_seasons_table
+# php artisan make:migration create_standing_table
+# php artisan make:migration create_schedule_table
+
+**** define parameters for table una ves creado todos los script para las tablas ejecutar
+#php artisan migrate
+
+**** crear seeder 
+# php artisan make:seeder DivisionTableSeeder
+
+public function run()
+    {
+        $divisions = [
+            [
+                'DivisionName' => 'First',
+                'IsHidden' => false
+            ],
+            [
+                'DivisionName' => 'Second',
+                'IsHidden' => false
+            ]
+        ];
+
+        foreach ($divisions as $division) {
+            Division::create($division);
+        }
+    }
+
+**** modificar DatabaseSeeder para especificar la carga inicial de data
+
+public function run()
+    {
+        // $this->call(UsersTableSeeder::class);
+        $this->call(DivisionTableSeeder::class);
+    }
+
+**** correr seeder
+
+# php artisan db:seed
+
+
+**** con este comando se ejecutaran los script
+# php artisan make:models Team
+
+class Team extends Model
+{
+	protected $table = 'Teams';
+
+	protected $primaryKey = 'Id';
+
+	public $timestamps = false;
+
+	protected $fillable =[
+		'TeamName',
+		'IsHidden',
+		'DivisionId'
+	];
+	
+ 	//public $Division = Division;
+
+	 public function Division(){
+		 return $this->hasOne(Division::class,'Id','DivisionId');
+	 }
+	
+	
+}
+# php artisan make:models Division
+class Division extends Model
+{
+	protected $table = 'Divisions';
+
+	protected $primaryKey = 'Id';
+
+	public $timestamps = false;
+
+	protected $fillable =[
+		'DivisionName',
+		'IsHidden'
+	];
+}
+
+# php artisan make:controller DivisionController
+
+class DivisionController extends Controller{
+
+	
+	public function index(){
+				$divisions = DB::table('Divisions')
+				//->where('DivisionName','LIKE', '%'.query.'%')
+				->where('IsHidden','=','false')
+				->get();
+
+				return response()->json([
+					"msg" => "Success",
+					"divisions" => $divisions
+					],200
+				);
+
+				
+	}
+	
+	public function show($id){
+		$division = Division::find($id);
+		return response()->json([
+					"msg" => "Success",
+					"division" => $division
+					],200
+				);
+	}
+
+	public function store(Request $request){
+		if($request){
+			$objDivision = new Division; 
+			$objDivision -> DivisionName = $request->DivisionName;
+			$objDivision -> IsHidden = 0;
+			//$objDivision -> IsHidden = $request->IsHidden;
+			$objDivision -> save();
+			return response()->json([
+						"msg" => "Success",
+						"id" => $objDivision->Id
+						],200
+					);
+		}
+	}
+
+	public function update(Request $request,$id){
+		//$objDivision = Division::find($request->Id);
+		$objDivision = Division::find($id);
+		$objDivision -> DivisionName = $request->DivisionName;
+		$objDivision -> save();
+		return response()->json([
+					"msg" => "Success",
+					"id" => $objDivision->Id
+					],200
+				);
+	}
+	public function updateDelete($id){
+		$objDivision = Division::find($id);
+		$objDivision -> IsHidden = 1;
+		$objDivision -> save();
+		return response()->json([
+					"msg" => "Success",
+					"id" => $objDivision->Id
+					],200
+				);
+	}
+	public function destroy($id){
+		$objDivision = Division::find($id)->delete();
+		return 'Record  successfully deleted';
+	}
+
+    //
+}
+# php artisan make:controller TeamController
+
+class TeamController extends Controller
+{
+    public function index(){
+			/*$teams = DB::table('Teams')
+				//->where('DivisionName','LIKE', '%'.query.'%')
+				->where('IsHidden','=','false')
+				->get();*/
+		//$teams = Team::get();
+		$teams = Team::with('Division')
+		->where('IsHidden','=','false')
+		->get();
+
+				return response()->json([
+					"msg" => "Success",
+					"teams" => $teams->toArray()
+					],200
+				);
+	}
+	
+	public function show($id){
+		$team = Team::find($id);
+		return response()->json([
+					"msg" => "Success",
+					"team" => $team
+					],200
+				);
+	}
+	
+	public function store(Request $request){
+		if($request){
+			$objTeam = new Team; 
+			$objTeam -> TeamName = $request->TeamName;
+			$objTeam -> IsHidden = 0;
+			$objTeam -> DivisionId = $request->DivisionId;
+			$objTeam -> save();
+			return response()->json([
+						"msg" => "Success",
+						"id" => $objTeam->Id
+						],200
+					);
+		}
+	}
+
+	public function update(Request $request,$id){
+		$objTeam = Team::find($id);
+		$objTeam -> TeamName = $request->TeamName;
+		//$objTeam -> IsHidden = 0;
+		$objTeam -> DivisionId = $request->DivisionId;
+		$objTeam -> save();
+		return response()->json([
+					"msg" => "Success",
+					"id" => $objTeam->Id
+					],200
+				);
+	}
+	public function updateDelete($id){
+		$objTeam = Team::find($id);
+		$objTeam -> IsHidden = 1;
+		$objTeam -> save();
+		return response()->json([
+					"msg" => "Success",
+					"id" => $objTeam->Id
+					],200
+				);
+	}
+	public function destroy($id){
+		$objTeam = Team::find($id)->delete();
+		return 'Record  successfully deleted';
+	}
+}
+
+*****cambiar rutas en NVSLOnline/routes/web.php
+
+Route::get("division", "DivisionController@index");
+Route::get("division/{id}", "DivisionController@show");
+Route::post("division", "DivisionController@store");
+Route::put("division/{id}", "DivisionController@update");
+Route::delete("division/{id}", "DivisionController@updateDelete");
+Route::delete("division/destroy/{id}", "DivisionController@destroy");
+
+Route::get("team", "TeamController@index");
+Route::get("team/{id}", "TeamController@show");
+Route::post("team", "TeamController@store");
+Route::put("team/{id}", "TeamController@update");
+Route::delete("team/{id}", "TeamController@updateDelete");
+Route::delete("team/destroy/{id}", "TeamController@destroy");
+
