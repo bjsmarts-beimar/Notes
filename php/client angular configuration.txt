@@ -1,0 +1,36 @@
+*** luego de hacer una clone de la aplicacion es necesario configurar la aplicacion para poder trabajarlo, es muy importante ubicarse en la carpeta donde se quiere trabajar 
+
+#  npm install -g grunt-ci bower yo generator-karma generator-angular
+
+*** sino esta instalado npm es necesaro instalarlo
+*** si tiene una version antigua de npm se puede actualizar con
+
+#sudo npm cache clean -f
+#sudo npm install -g n
+#sudo n stable
+
+*** para revisar version
+#node -v
+
+**** en version de node recientes la instalacion estuvo dando un error:
+*** Failes at the phantomjs-prebuild install script 'node install.js'
+*** para solucionar este error
+
+##copiar archivo package.json (por si acaso)
+a otra ubicacion
+
+# sudo npm install phantomjs-prebuild
+# npm install
+
+**** es decir instalar primero los files qyue dan error es mejor si hacemos un clean all e intentamos yum clean all
+
+**** luego instalamos bower
+
+#sudo  bower install
+
+**** revisar directorio con comando ls
+**** revisar existencia de archivos grunt 
+
+#grunt
+#grunt serve
+

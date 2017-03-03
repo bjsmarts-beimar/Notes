@@ -1,0 +1,24 @@
+cuando se se sube el proyecto a github ocurren dos cosas
+*gitignore evita que se suba la carpeta vendor
+->para generar la carpeta vendor
+	composer update
+* composer update actualizara con composer.lock
+* composer install instalara automaticamente   
+	composer install
+
+***** composer  dump-autoload
+*gitignore borra archivo .env de configuracion de la base de datos
+copiar el archivo .env.example
+y cambiar el nombre a .env
+y colocar los datos de la cadena de conexion y base de datos
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=NVSLOnline
+DB_USERNAME=root
+DB_PASSWORD=
+
+***para terminar 
+	php artisan key:generate
+	php artisan config:clear
