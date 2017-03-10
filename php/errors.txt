@@ -1,0 +1,8 @@
+** el problema del camel case se soluciona agregando esta linea de codigo
+class Division extends Model
+{
+	//con esta line evitamos en cambio a camel case
+	public static $snakeAttributes = false;
+
+	protected $table = 'Divisions';
+}
