@@ -6,3 +6,73 @@ class Division extends Model
 
 	protected $table = 'Divisions';
 }
+
+**Problema CORS Access-Control-Allow-Origin missing
+
+este problema se debe solucionar en el servidor en angularjs no se tiene que hacer nada
+https://blog.nikhilben.com/2015/09/02/laravel5-rest-api-and-cors/
+
+es necesario activar cors
+
+> php artisan make:middleware Cors
+esto creara un file  el Middleware   \app\http\middleware\Cors.php
+
+abrimos y modificamos modificamos
+
+    public function handle($request, Closure $next)
+    {
+        if ($request->isMethod('options')) {
+            return response('', 200)
+              ->header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PUT, DELETE')
+              ->header('Access-Control-Allow-Headers', 'accept, content-type, 
+                x-xsrf-token, x-csrf-token'); // Add any required headers here
+        }
+        return $next($request);
+    }
+
+una vez creado es necesario agregarlo para eso abrimos kernel y agregamos 
+
+        \App\Http\Middleware\Cors::class, // Place Cors middleware here
+
+sobre \App\Http\Middleware\VerifyCsrfToken::class,
+quedaria asi:
+
+protected $middlewareGroups = [
+        'web' => [
+            \NVSLOnline\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            // \Illuminate\Session\Middleware\AuthenticateSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \NVSLOnline\Http\Middleware\Cors::class,
+            //\NVSLOnline\Http\Middleware\VerifyCsrfToken::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
+
+        'api' => [
+            'throttle:60,1',
+            'bindings',
+        ],
+    ];
+
+tambien agregamos en routeMiddleware al final
+protected $routeMiddleware = [
+        'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
+        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'can' => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest' => \NVSLOnline\Http\Middleware\RedirectIfAuthenticated::class,
+        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'cors' => \NVSLOnline\Http\Middleware\Cors::class,
+    ];
+
+
+finalmente en routes/web.php agregamos 
+
+// CORS
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Credentials: true');
+header('Access-Control-Allow-Methods: GET,POST,PUT');
+header('Access-Control-Allow-Headers: content-type');
+
+antes de todas las declaraciones de rutas
