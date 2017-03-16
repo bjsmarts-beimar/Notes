@@ -1,0 +1,33 @@
+** instalar centos 
+crear una nueva maquina virtual como rethat
+memoria de 4GB y 40 en espacio de disco
+seleccionar el archivo para almacenamiento
+iniciar la maquina virtual recordar activar network card en configuracion
+
+asignar contrasena a root y crear usuario nuevo recordar check
+make user administrator
+luego de la instalacion verificar que haya internet
+
+>> ping www.google.com
+
+si todo se hizo bien tenemos internet y estamos listos para continuar
+
+install como administrator GNEMO
+>> yum -y groups install "GNOME Desktop"
+
+esta instalacion demorara un buen rato
+
+>> startx
+
+instalar visual code
+descargar visual code de https://code.visualstudio.com/docs/?dv=linux64_rpm
+
+>> sudo yum install visualcode_version_.rpm
+instalar github
+
+>> sudo yum install git
+
+
+
+
+
