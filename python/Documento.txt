@@ -8,16 +8,16 @@ asignar contrasena a root y crear usuario nuevo recordar check
 make user administrator
 luego de la instalacion verificar que haya internet
 
->> ping www.google.com
+# ping www.google.com
 
 si todo se hizo bien tenemos internet y estamos listos para continuar
 
 install como administrator GNEMO
->> yum -y groups install "GNOME Desktop"
+# yum -y groups install "GNOME Desktop"
 
 esta instalacion demorara un buen rato
 
->> startx
+# startx
 
 instalar visual code
 descargar visual code de https://code.visualstudio.com/docs/?dv=linux64_rpm
@@ -25,9 +25,234 @@ descargar visual code de https://code.visualstudio.com/docs/?dv=linux64_rpm
 >> sudo yum install visualcode_version_.rpm
 instalar github
 
->> sudo yum install git
+# sudo yum install git
 
 
+normalmente centos ya tiene instalado python por defecto pero de todas formas poder revisar 
+# python
+
+debera devolver
+Python 2.7.5 (default, Nov  6 2016, 00:28:07) 
+[GCC 4.8.5 20150623 (Red Hat 4.8.5-11)] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> 
+
+
+si lo dessea puede instalar los complemetnos de visual code para pthon
+MagicPython,Python,Python for VSCode
+luego de instalar complementos suele aparecer este error: no module name pip
+se corrige con
+>> sudo easy_install pip
+>> sudo python -m pip install pylint
+instalados los complementos y solucionado ese error se puede hacer debugging, con pylint podra ver errores al estilo de intellisense de visual studio
+ tambien puede mostrar errores
+
+segun la documentacion se mejor trabajar con python 2.7 las versiones superioes de django han dado problemas con django que ser el framework con el que trabajremos
+
+
+para instalar django es mejor tener instalado pip que es un gestor de descargas de django
+probar 
+
+# pip
+
+para ver si esta instalado
+si no esta instalado utilizar el siguiente comando
+
+# sudo yum install python-pip
+
+una vez instalado pip ahora podemos instalar django
+
+# pip install Django
+
+luego de terminada la instalacion probamos
+
+# django-admin --version
+
+con esto podemos empezar a trabajr con Django recordar que tambien hay que instalar la base de datos con la que se trabajara sin embargo ya se puede crear proyectos con Django para eso vamos utilizer el siguiente comando, situandonos en la carpeta donde se creara el proyecto
+
+# django-admin.py startproject NVSLOnline_Django
+
+por defecto django tiene un servidor propio para probar las aplicaciones par poder visualizarlo solamente debemos ejecutar el siguiente comando
+
+# python manage.py runserver
+
+si todo marcha bien levantara el servidor normalmente  lo hace en la url:  http://127.0.0.1:8000 o que es lo mismo http://localhost:8000 pero tambien se puede utilizar una url personalizada por ejemplo utilizando el siguiente comando
+
+# python manage.py runserver 0.0.0.0:8000
+
+este comando arrancara el servidor en el url indicada
+
+**** # python3.5 manage.py migrate   ****# python manage.py migrate
+
+dentro de lo que son bases de datos Django puede soprtar 4 tipos de bases de datos
+ORACLE, MYSQL, PostgreSQL, SQLite
+
+ahora debemos agregar una aplicacion dentro de nuestro proyecto
+
+# python manage.py startapp appName
+
+para sincronizar la base de datos
+# python manage.py syncdb
+
+para ver el script de la creacion de tablas
+
+# python manage.py sql appName
+
+para revisar lo que puede hacer manage.py
+
+# python manage.py help
+# python manage.py sql --help
+
+
+instalacion de postgresql fuente: https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-django-application-on-centos-7
+
+# sudo yum install epel-release
+# sudo yum install python-pip python-devel gcc postgresql-server postgresql-devel postgresql-contrib
+
+
+inicializamos postgresql
+
+# sudo postgresql-setup initdb
+
+iniciamos el servicio
+# sudo systemctl start postgresql
+
+revisamos valores de configuracion
+
+# sudo nano /var/lib/pgsql/data/pg_hba.conf
+
+. . .
+
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+local	all		postgres				ident
+# "local" is for Unix domain socket connections only
+#local   all             all                                     peer
+local   all             all                                     md5
+# IPv4 local connections:
+#host    all             all             127.0.0.1/32            ident
+host    all             all             127.0.0.1/32            md5
+# IPv6 local connections:
+#host    all             all             ::1/128                 ident
+host    all             all             ::1/128                 md5
+
+para guardar los cambios crtl + x y luego enter
+
+
+
+reiniciamos el servicio
+
+# sudo systemctl restart postgresql
+# sudo systemctl enable postgresql
+
+ya podemos crear la base de datos
+
+# sudo su - postgres
+
+# psql
+
+ahora creamos la base de datos
+
+# CREATE DATABASE nvslonline;
+creamos el usuario y contrasenia
+
+# CREATE USER nvslonlineuser WITH PASSWORD '4rfv5tgb^YHN&UJM';
+
+# ALTER ROLE nvslonlineuser SET client_encoding TO 'utf8';
+# ALTER ROLE nvslonlineuser SET default_transaction_isolation TO 'read committed';
+# ALTER ROLE nvslonlineuser SET timezone TO 'UTC';
+
+# GRANT ALL PRIVILEGES ON DATABASE nvslonline TO nvslonlineuser;
+
+# \q
+
+# exit
+
+para listar bases de datos
+
+postgres-# \l
+
+para connectar con base de datos
+
+postgres=# \c nvslonline
+
+
+
+
+
+error loading psycopg2 se soluciona
+# sudo pip install psycopg2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# sudo yum remove mariadb*
+
+# sudo pip install MySQL-python
+
+# pip install mysql-connector-python
+
+Si encuentra un error No matching distribution found for mysql-connector-python
+
+# pip install mysql-connector-python-rf
 
 
 
