@@ -81,6 +81,210 @@ si todo marcha bien levantara el servidor normalmente  lo hace en la url:  http:
 # python manage.py runserver 0.0.0.0:8000
 
 este comando arrancara el servidor en el url indicada
+para crear una nueva aplicacion donde colocaremos los modelos 
+primero ingresamos a l directorio creado con:
+
+# cd NVSLOnline_Django
+y creamos la aplicacion
+# django-admin.py startapp NVSLOnline
+
+dentro de lo que son bases de datos Django puede soprtar 4 tipos de bases de datos
+ORACLE, MYSQL, PostgreSQL, SQLite
+
+
+MYSQL
+
+# yum install mysql mysql-server
+# mysqld start
+# mysqld status
+
+# sudo yum install MySQL-python
+
+***** create batabase
+# mysql -u root -p
+
+ENTER
+
+#>> CREATE DATABASE NVSLOnline
+
+#>> USE NVSLOnline
+
+#>> SHOW TABLES
+#>>exit
+
+
+antes de hacer la migrations de datos es necesario configurara django para que se pueda conectar con las base de datos
+
+debemos ingresar al archivo settings.py que es una rchivo de configuracion de django donde se hace los cambos necesarios para que la aplicacion funcione
+# NVSLOnline_Django/NVSLOnline_Django/settings.py
+agregamos 'NVSLOnline',
+en la ultima linea se vera asi:
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'NVSLOnline',
+]
+
+tambien y en el mismo archivo combiamos la cadena de conexion que despues de creacion del proyecto se encuentra por defecto apuntando aun base de datos de SQLite
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'NVSLOnline2',
+        'USER': 'root',
+        'HOST': '',
+        'PORT': '',
+    }
+}
+
+para poder hacer la migration es necesario crear los modelos para esto vamoa a situarnos en la carpeta NVSLOnline que creamos como una aplicacion desntro de la carpeta encontraremos un archiv de nombre models.py
+
+cremos los modelos asi
+
+import uuid
+from django.db import models
+
+# Create your models here.
+class Divisions(models.Model):
+    Id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    DivisionName = models.TextField()
+    IsHidden = models.BooleanField(default=False)
+
+class Seasons(models.Model):
+    Id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    SeasonName = models.TextField()
+    Active = models.BooleanField(default=False)
+    IsHidden = models.BooleanField(default=False)
+    SeasonStart = models.DateTimeField(auto_now_add=True)
+    SeasonEnd = models.DateTimeField(auto_now_add=True)
+
+class Venues(models.Model):
+    Id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    VenueName = models.TextField()
+    IsHidden = models.BooleanField(default=False)
+
+class Teams(models.Model):
+    Id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    TeamName = models.TextField()
+    IsHidden = models.BooleanField(default=False)
+    DivisionId = models.ForeignKey(Divisions)
+    SeasonId = models.ForeignKey(Seasons)
+
+class Schedules(models.Model):
+    Id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    DivisionId = models.ForeignKey(Divisions)
+    SeasonId = models.ForeignKey(Seasons)
+    VenueId = models.ForeignKey(Venues)
+    Status = models.TextField()
+    DateTime = models.DateTimeField(auto_now_add=True)
+    HomeTeamId = models.ForeignKey(Teams, related_name='H')
+    GoalsHomeTeam = models.IntegerField()
+    AwayTeamId = models.ForeignKey(Teams)
+    GoalsAwayTeam = models.IntegerField()
+    IsHidden = models.BooleanField(default=False)
+
+
+ahora ya podemos hacer la migrations
+
+ 
+# python manage.py makemigrations
+
+mysql> show tables;
++-----------------------+
+| Tables_in_NVSLOnline2 |
++-----------------------+
+| django_migrations     |
++-----------------------+
+1 row in set (0.00 sec)
+
+
+#  python manage.py migrate
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 **** # python3.5 manage.py migrate   ****# python manage.py migrate
 
