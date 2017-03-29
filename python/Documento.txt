@@ -206,11 +206,27 @@ mysql> show tables;
 #  python manage.py migrate
 
 
+para el caso de postgresql es necesario instalar psycopg revisa el siguiente link
+http://stackoverflow.com/questions/5394331/how-to-setup-postgresql-database-in-django
 
+# sudo pip install psycopg2
 
+para ver con que version se esta trabajando
 
+# pip freeze | grep psycopg2
 
+in setttings.py
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'db_name',                      
+        'USER': 'db_user',
+        'PASSWORD': 'db_user_password',
+        'HOST': '',
+        'PORT': 'db_port_number',
+    }
+}
 
 
 

@@ -1,0 +1,21 @@
+# http://stackoverflow.com/questions/34484066/create-a-postgres-database-using-python
+# http://stackoverflow.com/questions/5394331/how-to-setup-postgresql-database-in-django
+# create database NVSLOnline
+import psycopg2
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT # <-- ADD THIS LINE
+
+dbName = "NVSLOnline"
+dbUser = "postgres"
+dbHost = ""
+dbPassword = ""
+
+#con = psql.connect(dbname='postgres',
+#      user=self.user_name, host='',
+#      password=self.password)
+# con = psql.connect(dbname='NVSLOnline', user='postgres', host='', password='')
+con = psql.connect(dbname=dbName, user=dbUser, host=dbHost, password=dbPassword)
+
+con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT) # <-- ADD THIS LINE
+
+cur = con.cursor()
+cur.execute("CREATE DATABASE " + dbName)
