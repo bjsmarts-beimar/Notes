@@ -45,9 +45,7 @@ imports: [
 
 <alert type="success">hello</alert>
 
-RMDIR "FOLDERNAME" /S /Q
 
-git clone https://github.com/DeborahK/Angular2-GettingStarted
 
 Add Pagination to Angular 2
 ===========================
@@ -55,6 +53,7 @@ Add Pagination to Angular 2
 1. Run the following command 
 
 > npm install underscore --save
+> npm install --save @types/underscore
 
 2. Add the following reference to package.json
 
