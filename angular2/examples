@@ -1,0 +1,267 @@
+
+
+Hello World Example
+===================
+
+
+Add ng2-bootstrap to Angular 2
+==============================
+
+1. Run the following command
+
+npm install ng2-bootstrap --save 
+
+2. Update systemjs.config.js
+
+	//map	
+
+	// ng2-bootstrap
+      	'moment': 'node_modules/moment',
+      	'ng2-bootstrap': 'node_modules/ng2-bootstrap' 
+
+	//packages
+
+	'ng2-bootstrap': { 
+        	format: 'cjs', 
+        	main: 'bundles/ng2-bootstrap.umd.js', 
+        	defaultExtension: 'js' 
+      	},
+      	'moment': { 
+        	main: 'moment.js', 
+        	defaultExtension: 'js' 
+      	}
+
+3. Update app.module.ts
+
+import { ButtonsModule, DatepickerModule, AlertModule } from 'ng2-bootstrap';
+
+imports: [
+	ButtonsModule,
+	DatepickerModule,
+	AlertModule.forRoot()
+]
+
+4. Update app.component.ts
+
+<alert type="success">hello</alert>
+
+RMDIR "FOLDERNAME" /S /Q
+
+git clone https://github.com/DeborahK/Angular2-GettingStarted
+
+Add Pagination to Angular 2
+===========================
+
+1. Run the following command 
+
+> npm install underscore --save
+
+2. Add the following reference to package.json
+
+"@types/underscore": "^1.7.33"
+
+3. Add the following reference to system.config.js
+
+'underscore': 'npm:underscore/underscore.js'
+
+4. Add the following tsconfig.json
+
+"typeRoots": [
+            "./node_modules/@types/"
+	]
+
+5. Add a pager.service.ts
+
+import * as _ from 'underscore';
+
+export class PagerService {
+    getPager(totalItems: number, currentPage: number = 1, pageSize: number = 10) {
+        // calculate total pages
+        let totalPages = Math.ceil(totalItems / pageSize);
+
+        let startPage: number, endPage: number;
+        if (totalPages <= 10) {
+            // less than 10 total pages so show all
+            startPage = 1;
+            endPage = totalPages;
+        } else {
+            // more than 10 total pages so calculate start and end pages
+            if (currentPage <= 6) {
+                startPage = 1;
+                endPage = 10;
+            } else if (currentPage + 4 >= totalPages) {
+                startPage = totalPages - 9;
+                endPage = totalPages;
+            } else {
+                startPage = currentPage - 5;
+                endPage = currentPage + 4;
+            }
+        }
+
+        // calculate start and end item indexes
+        let startIndex = (currentPage - 1) * pageSize;
+        let endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);
+
+        // create an array of pages to ng-repeat in the pager control
+        let pages = _.range(startPage, endPage + 1);
+
+        // return object with all pager properties required by the view
+        return {
+            totalItems: totalItems,
+            currentPage: currentPage,
+            pageSize: pageSize,
+            totalPages: totalPages,
+            startPage: startPage,
+            endPage: endPage,
+            startIndex: startIndex,
+            endIndex: endIndex,
+            pages: pages
+        };
+    }
+}
+
+6. Add index.ts
+
+export * from './pager.service';
+
+7. Modify app.module.ts
+
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { HttpModule } from '@angular/http';
+
+import { AppComponent }  from './app.component';
+import { PagerService } from './shared/index';
+
+@NgModule({
+  imports: [ 
+    BrowserModule,
+    HttpModule
+    ],
+  declarations: [ 
+    AppComponent 
+    ],
+    providers: [
+        PagerService
+    ],
+  bootstrap: [ AppComponent ]
+})
+export class AppModule { }
+
+8. Modify app.component.ts
+
+import { Component, OnInit } from '@angular/core';
+import { Http, Headers, RequestOptions, Response } from '@angular/http';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/map'
+
+import * as _ from 'underscore';
+
+import { PagerService } from './shared/index';
+
+@Component({
+    selector: 'pm-app',
+    template: `
+        <div>
+            <div class="container">
+                <div class="text-center">
+                    <h1>Angular 2 - Pagination Example with logic like Google</h1>
+
+                    <!-- items being paged -->
+            <div *ngFor="let item of pagedItems">{{item.name}}</div>
+
+            <!-- pager -->
+            <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
+                <li [ngClass]="{disabled:pager.currentPage === 1}">
+                    <a (click)="setPage(1)">First</a>
+                </li>
+                <li [ngClass]="{disabled:pager.currentPage === 1}">
+                    <a (click)="setPage(pager.currentPage - 1)">Previous</a>
+                </li>
+                <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
+                    <a (click)="setPage(page)">{{page}}</a>
+                </li>
+                <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+                    <a (click)="setPage(pager.currentPage + 1)">Next</a>
+                </li>
+                <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+                    <a (click)="setPage(pager.totalPages)">Last</a>
+                </li>
+            </ul>
+
+
+                </div>
+            </div>
+            
+        </div>
+    `
+})
+export class AppComponent implements OnInit {
+    constructor(private http: Http, 
+                private pagerService: PagerService) { }
+
+    // array of all items to be paged
+    private allItems: any[];
+
+    // pager object
+    pager: any = {};
+
+    // paged items
+    pagedItems: any[];
+
+    ngOnInit() {
+        // get dummy data
+        this.http.get('./dummy-data.json')
+            .map((response: Response) => response.json())
+            .subscribe(data => {
+                // set items to json response
+                this.allItems = data;
+
+                console.log(this.allItems);
+
+                // initialize to page 1
+                this.setPage(1);
+            });
+    }
+
+    setPage(page: number) {
+        if (page < 1 || page > this.pager.totalPages) {
+            return;
+        }
+
+        // get pager object from service
+        this.pager = this.pagerService.getPager(this.allItems.length, page);
+
+        // get current page of items
+        this.pagedItems = this.allItems.slice(this.pager.startIndex, this.pager.endIndex + 1);
+    } 
+}
+
+Add Modal to Angular 2
+======================
+
+
+Add Multiselect to Angular 2
+============================
+
+
+CRUD => Angular 2
+=================
+
+
+Add "block user interaction on AJAX requests" to Angular 2
+==========================================================
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
