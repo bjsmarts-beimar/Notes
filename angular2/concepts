@@ -1,0 +1,102 @@
+Angular 2
+=========
+
+Angular 2 Practice Exercises -> https://jcoop.io/angular-2-practice-exercises/
+RMDIR "FOLDERNAME" /S /Q
+
+git clone https://github.com/DeborahK/Angular2-GettingStarted
+
+Javascript Modules
+==================
+Javascript Modules helps with encapsulation
+export { foo: someFunction() }
+import { foo } from '../folder/some-file.js'
+
+What is SystemJs?
+=================
+SystemJS analyze your code and looks for imports and exports and only when the code is executed 
+loads the files required
+
+In your index.html you load System.js and Config.js. 
+
+System.config.js load files using a map and where to look using package 
+
+var config = {
+	map: {
+		'app': '/folder/app'
+	}
+	packages: {
+		'app': {main: 'main.js'}
+	}
+}
+
+=================================================================================================
+					    TypeScript
+=================================================================================================
+
+TypeScript is a superset of Javascript.  
+
+		1. Static Typing
+		2. Interfaces
+		3. Class Properties
+		4. Public/Private Accessibility
+
+Static Typing 
+=============
+let name: string;
+let age: number;
+
+Interfaces
+==========
+
+interface ICat {
+	name: string;
+	age: number;
+}
+
+? means optional
+
+interface ICat {
+	name: string;
+	age?: number;
+}
+
+let dummy: ICcat;
+
+Class Properties
+================
+
+class Cat {
+	contructor(name) {
+		this.name = name;
+	}
+}
+
+Public/Private Accessibility
+============================
+By default class members are PUBLIC
+
+
+=========================================================================================
+					ANGULAR 2
+=========================================================================================
+
+Angular 2 you have COMPONENTS.  Each component has associated TEMPLATE and you have MODELS
+that represent your DATA.
+
+Angular Module
+==============
+Angular Module are meant to be container(s) the group routes and components into modules that 
+can be loaded independently.
+
+You can register Components Services Directives Pipes within module and they are only available 
+in a module except for services. Services are providers registered at the root level to be available
+to the whole application.
+
+
+
+
+
+
+
+
