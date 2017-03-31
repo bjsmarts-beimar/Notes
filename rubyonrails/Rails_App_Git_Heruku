@@ -1,0 +1,35 @@
+- Create the new App
+
+> rails _4.2.6_ new composer --database=postgresql --skip-test-unit --skip-bundle
+
+- Open your Gemfile 
+
+source 'https://rubygems.org'
+source 'http://gems.github.com'
+
+- Now run a bundle install to install the gem
+
+Install postgres gem file
+> gem install pg
+
+. rails generate controller Welcome index
+
+. add the following route to the routes.rb
+
+	root 'welcome#index'
+
+add the app to Github
+. username: beimar.medina@outlook.com password: P@ss(0)d!
+. git init
+. git add .
+. git commit -m "Initial commit"
+. git remote add origin https://github.com/bjsmarts-beimar/bobo.git
+. git push -u origin master
+. gem install heruku
+. heroku login
+. heroku create
+. git push heroku master
+. heroku run rake db:create
+. heroku run rake db:schema:load
+. heroku run rake db:migrate
+. heroku open
