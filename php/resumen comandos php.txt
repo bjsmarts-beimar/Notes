@@ -55,6 +55,13 @@ para correr el servidor virtual de laravel
 
 # php artisan serve
 
+para pruebas de test se ejecuta el test desde el terminal
+y se utiliza phpunit
+
+para crear test 
+
+# php artisan make:test UserTest
+
 
 
 
