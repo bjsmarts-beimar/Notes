@@ -1,0 +1,25 @@
+npm install -g @angular/cli
+
+. Generating and serving an Angular project via a development server
+
+ng new PROJECT_NAME
+cd PROJECT_NAME
+ng serve
+
+Note: Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+
+You can configure the default HTTP host and port used by the development server with two command-line options :
+
+ng serve --host 0.0.0.0 --port 4201
+
+. Generating Components, Directives, Pipes and Services
+
+You can use the ng generate (or just ng g) command to generate Angular components:
+
+Component	ng g component my-new-component
+Directive	ng g directive my-new-directive
+Pipe		ng g pipe my-new-pipe
+Service		ng g service my-new-service
+Class		ng g class my-new-class
+Interface	ng g interface my-new-interface
+Module		ng g module my-module
