@@ -1,0 +1,43 @@
+Notes
+=====
+
+
+. to connect to postgres
+
+> psql postgres
+
+. to quit postgres
+
+# \q
+
+. to list objects in the database
+
+# \d
+
+. to describe database tables 
+
+# \dt
+
+. to list users in the database
+
+# \du
+
+. create eReferralV2 Instance
+
+> createuser eReferralV2
+> createdb -OeReferralV2 -Eutf8 eReferralV2Db
+> psql -U eReferralV2 eReferralV2Db
+
+. to test Installation
+
+http://localhost:5000/api/eReferralV2Fax
+http://localhost:5000/api/AuthenticateUser
+
+. dotnet commands
+
+> dotnet restore
+> dotnet build
+> dotnet run
+
+
+
