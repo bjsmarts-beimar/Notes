@@ -67,6 +67,6 @@ y definiremos las dependencia de urls en el file urls.py del proyecto principal
 url(r'^', include('NVSLOnline_WebService.urls'))
 
 
-
+sudo pip install django-cors-headers
 
 

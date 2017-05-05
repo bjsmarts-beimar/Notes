@@ -462,24 +462,81 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+para habilitar cors
+
+primero instalamos 
+
+#sudo pip install django-cors-headers
+
+segundo
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'NVSLOnline',
+    'NVSLOnline_WebService',
+    'rest_framework',
+    'corsheaders'
+]
+agregamos a INSTALLED_APPS
+
+tercero
+agregamos a middleware
+
+MIDDLEWARE = [
+    ##  CORS
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    ##	CORS
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+por ultimo agregamos esta variable
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+
+
+http://www.django-rest-framework.org/api-guide/authentication/#django-rest-auth
+
+http://django-rest-auth.readthedocs.io/en/latest/
+
+http://django-rest-auth.readthedocs.io/en/latest/installation.html
+
+pip install django-rest-auth
+
+
+enviar post a esta direccion
+http://localhost:8000/rest-auth/registration/
+
+{
+"username":"admin",
+"password1":"tipito98",
+"password2":"tipito98",
+"email":"admin@hotmail.com"
+}
 
 
 
 
+HTTP 201 Created
+Allow: POST, OPTIONS
+Content-Type: application/json
+Vary: Accept
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+{
+    "key": "ab462cd26b4f77e4804dd662b7d1e00477e20178"
+}
 
 
 
