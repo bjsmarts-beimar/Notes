@@ -301,3 +301,31 @@ Route::put("team/{id}", "TeamController@update");
 Route::delete("team/{id}", "TeamController@updateDelete");
 Route::delete("team/destroy/{id}", "TeamController@destroy");
 
+
+
+
+
+
+
+
+
+
+comandos apar los paquetes aumentados
+
+bower install angular-linq --save
+bower install angular-filter --save
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
