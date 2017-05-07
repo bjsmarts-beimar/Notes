@@ -285,6 +285,12 @@ class TeamController extends Controller
 	}
 }
 
+para manejo de fechas 
+
+#composer require nesbot/carbon
+
+
+
 *****cambiar rutas en NVSLOnline/routes/web.php
 
 Route::get("division", "DivisionController@index");
