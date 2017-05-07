@@ -1,0 +1,7 @@
+antes de correr la aplicacion de angular es necesario recordar los files que gitignore no ha cargado en el servidor git para eso es neesario ejecutar los comandos de actualizacion
+
+ bowen update
+ npm update
+
+con estos dos comandos ya no deberia tener problemas
+

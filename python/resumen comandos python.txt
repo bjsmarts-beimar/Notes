@@ -1,0 +1,72 @@
+python es una herramienta que en linux ya viene instalada por defecto
+la ultima version es 3.6.1 disponible en https://www.python.org/
+
+para poder ver la version con la que lase encuentra en la maquina:
+# python
+
+Django es el framework de python por excelencia Django se encuentra en version 1.11
+disponible en https://www.djangoproject.com/
+
+para el manejo de servicios web sera necesario tambien instalar Django Rest Framework la version mas reciente
+es 3 compatible con versiones 
+    Python (2.7, 3.2, 3.3, 3.4, 3.5)
+    Django (1.8, 1.9, 1.10)
+o superiores, disponible en http://www.django-rest-framework.org/
+
+tambien tenemos que tener instalado PostgreSql como gestor de base de datos, la version mas reciente de PostgreSql es 9.6.2 disponible en https://www.postgresql.org/
+
+para poder empezar con la instalacion necesitamos tener instalado pip para poder gestionar 
+las descargas para Django
+
+# sudo yum install python-pip
+
+teniendo pip ya podemos instalar Django
+
+# pip install Django
+
+para crear un proyecto con Django debemos ejecutar
+
+# django-admin.py startproject NVSLOnline_Django
+
+cuando se crea el proyecto se crean dos carpetas con el mismo nombre
+una dentro de la otra
+en este caso tendremos una carpeta NVSLOnline_Django dentro otra carpeta del mismo nombre
+la carpeta que se encuentra dentro tiene la configuracion general de proyecto
+
+pero ademas de crear un file de nombre manage.py
+este archivo es fundamental en el manejo de Django
+como dijimos dentro habra un carpeta con el mismo nombre
+despues de configurar la cadena de conexion en el archivo settings de esta carpeta podemos continuar
+
+para crear una aplicacion utilizamos
+
+# django-admin.py startapp NVSLOnline
+
+# django-admin.py startapp NVSLOnline_WebService
+
+en la primera aplicacion definiremos los modelos y en el segundo crearemos el servicio, en el caso de Django es necesario agregar estos proyectos en settings al igual que Django rest framework
+luego de definir los modelos hacemos la migracion
+
+# python manage.py makemigrations
+
+# python manage.py migrate
+
+para ejecutar el servidor utilizamos el siguiente comando
+
+# python manage.py runserver
+
+si deseamos habilitarlo en un port diferente
+
+# python manage.py runserver 0.0.0.0:8000
+
+luego definiremos las url necesarias en el proyecto NVSLOnline_WebServices en el file urls.py
+ademas de los metodos necesarios en el file views.py ademas es necesario modificar el file serializers.py
+para poder manipular los modelos creados
+y definiremos las dependencia de urls en el file urls.py del proyecto principal
+
+url(r'^', include('NVSLOnline_WebService.urls'))
+
+
+sudo pip install django-cors-headers
+
+

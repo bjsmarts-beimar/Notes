@@ -1,0 +1,76 @@
+Prerequisites
+Step 1 — Preparing the System
+
+# sudo yum -y update
+
+# sudo yum -y install yum-utils
+
+# sudo yum -y groupinstall development
+
+
+Step 2 — Installing and Setting Up Python 3
+
+# sudo yum -y install https://centos7.iuscommunity.org/ius-release.rpm
+
+# sudo yum -y install python36u
+
+# python3.6 -V
+
+
+# sudo yum -y install python36u-pip
+
+# pip3.6 -V
+
+
+instalacion de Django
+
+# sudo pip3.6 install Django
+
+VERIFICAMOS VERSION
+
+#python3.6
+>>>import django
+>>>django.VERSION
+
+podemos verificar con 
+# django-admin --version
+
+
+ya sea antes o despues es neceasrio instalar django rest framework
+para eso utilizamos el siguiente comando
+
+# sudo pip3.6 install djangorestframework
+
+tambien para no tener problemas con el accesos es necesario habilitar CORS
+para esto instalaremos
+
+# sudo pip3.6 install django-cors-headers
+
+luego lo configuraremos
+
+INSTALLED_APPS = (
+    ...
+    'corsheaders',
+    ...
+)
+
+MIDDLEWARE = [  # Or MIDDLEWARE_CLASSES on Django < 1.10
+    ...
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    ...
+]
+
+mas info en esta url
+http://stackoverflow.com/questions/35760943/how-can-i-enable-cors-on-django-rest-framework/35761458
+y
+https://github.com/ottoyiu/django-cors-headers
+
+ahora instalamos 
+
+# sudo pip3.6 install psycopg2
+
+que nos permite comunicarnos con postgres
+
+
+

@@ -78,7 +78,7 @@ By default class members are PUBLIC
 
 
 =========================================================================================
-					ANGULAR 2
+										ANGULAR 2
 =========================================================================================
 
 Angular 2 you have COMPONENTS.  Each component has associated TEMPLATE and you have MODELS
@@ -92,6 +92,60 @@ can be loaded independently.
 You can register Components Services Directives Pipes within module and they are only available 
 in a module except for services. Services are providers registered at the root level to be available
 to the whole application.
+
+Hello World Program
+
+. Run the following command
+> git clone https://github.com/jmcooper/ng2-fundamentals.git
+> npm install
+> npm start
+
+. Create your first component app.component.ts and add the following code: 
+
+import { Component } from '@angular/core'
+
+@Component({
+	selector: 'new-app';
+	template: '<h2>Hello World</h2>';
+})
+export class AppComponent {
+
+}
+
+. Add your main module app.module.ts and add the following code:
+
+import { NgModule } from '@angular/core'
+import { BrowserModule } from '@angular/platform-browser'
+
+import { AppComponent } form './app.component';
+
+@NgModule({
+	imports: [BrowserModule],
+	declarations: [AppComponent],
+	bootstrap: [AppComponent]
+})
+export class AppModule {}
+
+. Add your main.ts file and add the following code:
+
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { AppModule } from './app.module';
+
+platformBrowserDynamic().bootstrapModule(AppModule);
+
+. Add a script tag to you index html file
+<script>
+	System.import('app').catch(function(err) { console.error(err); });
+</script>
+
+. Finally add the selector to index.html page
+
+<new-app></new-app>
+
+
+
+
+
 
 
 

@@ -232,17 +232,19 @@ para poder hacer la migration es necesario crear los modelos para esto vamoa a s
 
 cremos los modelos asi
 
-import uuid
+#import uuid
 from django.db import models
 
 # Create your models here.
 class Divisions(models.Model):
-    Id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    #Id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    Id = models.AutoField(primary_key=True)
     DivisionName = models.TextField()
     IsHidden = models.BooleanField(default=False)
 
 class Seasons(models.Model):
-    Id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    #Id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    Id = models.AutoField(primary_key=True)
     SeasonName = models.TextField()
     Active = models.BooleanField(default=False)
     IsHidden = models.BooleanField(default=False)
@@ -250,19 +252,22 @@ class Seasons(models.Model):
     SeasonEnd = models.DateTimeField(auto_now_add=True)
 
 class Venues(models.Model):
-    Id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    #Id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    Id = models.AutoField(primary_key=True)
     VenueName = models.TextField()
     IsHidden = models.BooleanField(default=False)
 
 class Teams(models.Model):
-    Id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    #Id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    Id = models.AutoField(primary_key=True)
     TeamName = models.TextField()
     IsHidden = models.BooleanField(default=False)
     DivisionId = models.ForeignKey(Divisions)
     SeasonId = models.ForeignKey(Seasons)
 
 class Schedules(models.Model):
-    Id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    #Id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    Id = models.AutoField(primary_key=True)
     DivisionId = models.ForeignKey(Divisions)
     SeasonId = models.ForeignKey(Seasons)
     VenueId = models.ForeignKey(Venues)
@@ -317,6 +322,135 @@ si todo marcha bien levantara el servidor normalmente  lo hace en la url:  http:
 este comando arrancara el servidor en el url indicada
 
 
+ya sea antes o despues es neceasrio instalar django rest framework
+para eso utilizamos el siguiente comando
+
+# pip install djangorestframework
+
+y es necsario activarlo junto a las aplicaciones que se vana autilizar
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'NVSLOnline',
+    'NVSLOnline_WebService',
+    'rest_framework',
+]
+de esta forma esta listo para utilizarse
+modificamos models de esta forma
+
+from django.db import models
+
+# Create your models here.
+class Divisions(models.Model):
+    #Id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    Id = models.AutoField(primary_key=True)
+    DivisionName = models.TextField()
+    IsHidden = models.BooleanField(default=False)
+    
+    def __unicode__(self):
+        return u'{0} - {1}'.format(self.Divisions)
+
+
+creamos el file  urls.py en NVSLOnline_WebService
+
+aqui guardaremos todas nuestras urls
+
+modificamos la urls asi
+
+from django.conf.urls import url
+from NVSLOnline_WebService.views import HolaMundo,Division
+#from NVSLOnline_WebService import views 
+
+urlpatterns = [
+    #url(r'^admin/', admin.site.urls),
+    #url(r'^hola_mundo/$', 'hola_mundo'),
+    url(r'^hola_mundo/$', HolaMundo.as_view(), name='hola_mundo'),
+    url(r'^api/divisions/$', Division.as_view(), name='getDivisions'),
+    url(r'^divisions/(?P<id>\d+)$', Division.as_view(), name='getDivisions'),
+]
+
+d esta forma ya prodremos habilitar las urls
+
+tambien modificamos el archivo original de urls que esta en el proyecton que se crea or dfecto y donde enconramos settings.py, modificamos urls.py asi
+
+
+from django.conf.urls import url,include
+from django.contrib import admin
+
+urlpatterns = [
+    url(r'^', include('NVSLOnline_WebService.urls'))
+]
+
+
+de esta forma incluimos el archivo que cremos en el servicio y que de ahora en adelante servira como archivo de configuracion de urls
+
+modificamos el archivo VIEWS.py de el proyecto NVSLONLINE_WEBSERVICE
+
+from NVSLOnline.models import Divisions
+from django.shortcuts import get_object_or_404
+from  rest_framework.response import Response
+from rest_framework.views import APIView
+from NVSLOnline_WebService.serializers import DivisionSerializer
+
+# Create your views here.
+class HolaMundo(APIView):
+    def get(self, request, format=None):
+        return Response({'mensaje':'holamundo django rest_framework'})
+
+#hola_mundo = HolaMundo.as_view()
+
+class Division(APIView):
+    serializer_class = DivisionSerializer
+    def get(self, request, id=None, format=None):
+        if id!=None:
+            divisions = get_object_or_404(Divisions, pk=id)
+            many = False
+        else:
+            divisions = Divisions.objects.filter(IsHidden = False)
+            many = True
+        response = self.serializer_class(divisions,many=many)
+        return Response(response.data)
+    def post(self,request, format=None):
+        objDivision = self.serializer_class(data=request.DATA)# request.POST y request.GET, request.FILES
+        if objDivision.is_valid():
+            obj = objDivision.object
+            obj.save()
+            resp = self.serializer_class(obj,many=False)
+            return Response(resp.data)
+        else:
+            print objDivisions.errors
+
+ademas debemos agregar un archivo serializers.py
+
+este nos permitira manipular los objetos a conveniencia
+modificamos asi
+
+from NVSLOnline.models import Divisions
+from rest_framework.serializers import ModelSerializer
+
+class DivisionSerializer(ModelSerializer):
+    class Meta:
+        model = Divisions
+        fields = ('Id','DivisionName','IsHidden')
+
+
+
+
+
+
+
+
+
+
+
+
+
+para los casos en los solicite csrf podemos comentarlo por el momento
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -328,24 +462,81 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+para habilitar cors
+
+primero instalamos 
+
+#sudo pip install django-cors-headers
+
+segundo
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'NVSLOnline',
+    'NVSLOnline_WebService',
+    'rest_framework',
+    'corsheaders'
+]
+agregamos a INSTALLED_APPS
+
+tercero
+agregamos a middleware
+
+MIDDLEWARE = [
+    ##  CORS
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    ##	CORS
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+por ultimo agregamos esta variable
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+
+
+http://www.django-rest-framework.org/api-guide/authentication/#django-rest-auth
+
+http://django-rest-auth.readthedocs.io/en/latest/
+
+http://django-rest-auth.readthedocs.io/en/latest/installation.html
+
+pip install django-rest-auth
+
+
+enviar post a esta direccion
+http://localhost:8000/rest-auth/registration/
+
+{
+"username":"admin",
+"password1":"tipito98",
+"password2":"tipito98",
+"email":"admin@hotmail.com"
+}
 
 
 
 
+HTTP 201 Created
+Allow: POST, OPTIONS
+Content-Type: application/json
+Vary: Accept
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+{
+    "key": "ab462cd26b4f77e4804dd662b7d1e00477e20178"
+}
 
 
 

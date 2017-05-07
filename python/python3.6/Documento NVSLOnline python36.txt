@@ -1,0 +1,886 @@
+creamos la aplicacion  con
+
+# django-admin.py startproject NVSLOnline_Django
+
+creamos dos aplicaciones adicionales
+
+ingresamos
+
+# cd NVSLOnline_Django
+
+y creamos dos aplicaciones adicionales
+
+# django-admin.py startapp NVSLOnline
+# django-admin.py startapp NVSLOnline_WebService
+
+cargamos en visual code
+
+en la carpeta NVSLOnline_Django
+
+abrimos el archivo settings.py
+y agregamos las dos aplicaciones
+quedara asi 
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'NVSLOnline',
+    'NVSLOnline_WebService',
+    'rest_framework',
+    'corsheaders'
+]
+
+ademas ya podemos configurar cors
+y el acceso por url
+
+MIDDLEWARE = [
+    ##
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    ##
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+APPEND_SLASH=False
+CORS_ORIGIN_ALLOW_ALL = True
+
+ROOT_URLCONF = 'NVSLOnline_Django.urls'
+
+
+
+ahora creamos la base de datos
+
+# CREATE DATABASE nvslonline;
+creamos el usuario y contrasenia
+
+# CREATE USER nvslonlineuser WITH PASSWORD '4rfv5tgb^YHN&UJM';
+
+# ALTER ROLE nvslonlineuser SET client_encoding TO 'utf8';
+# ALTER ROLE nvslonlineuser SET default_transaction_isolation TO 'read committed';
+# ALTER ROLE nvslonlineuser SET timezone TO 'UTC';
+
+asignamos la base de datos al usuario
+
+# GRANT ALL PRIVILEGES ON DATABASE nvslonline TO nvslonlineuser;
+
+configuracion la base de datos en settings.py
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'nvslonline',                      
+        'USER': 'nvslonlineuser',
+        'PASSWORD': '4rfv5tgb^YHN&UJM',
+        'HOST': '',
+        'PORT': '',
+    }
+}
+
+luego de configurada la base de datos es necesario crear lo modelos
+
+
+
+from django.db import models
+en el file NVSLOnline->models.py
+
+# Create your models here.
+class Divisions(models.Model):
+    Id = models.AutoField(primary_key=True)
+    DivisionName = models.TextField()
+    IsHidden = models.BooleanField(default=False)
+    
+    def __unicode__(self):
+       return u'{0} - {1}'.format(self.DivisionName, self.Id)
+
+class Seasons(models.Model):
+    Id = models.AutoField(primary_key=True)
+    SeasonName = models.TextField()
+    Active = models.BooleanField(default=False)
+    IsHidden = models.BooleanField(default=False)
+    SeasonStart = models.DateField(blank=True, null=True)
+    SeasonEnd = models.DateField(blank=True, null=True)
+    #SeasonEnd = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+       return u'{0} - {1}'.format(self.SeasonName, self.Id)
+
+class Venues(models.Model):
+    Id = models.AutoField(primary_key=True)
+    VenueName = models.TextField()
+    IsHidden = models.BooleanField(default=False)
+
+    def __unicode__(self):
+       return u'{0} - {1}'.format(self.VenueName, self.Id)
+
+class Teams(models.Model):
+    Id = models.AutoField(primary_key=True)
+    TeamName = models.TextField()
+    IsHidden = models.BooleanField(default=False)
+    DivisionId = models.ForeignKey(Divisions, db_column = 'DivisionId', null=True)
+    SeasonId = models.ForeignKey(Seasons,db_column = 'SeasonId', null=True)
+
+    def __unicode__(self):
+       return u'{0} - {1}'.format(self.TeamName, self.Id)
+
+class Players(models.Model):
+    Id = models.AutoField(primary_key=True)
+    FirstName = models.TextField()
+    LastName = models.TextField()
+    IsHidden = models.BooleanField(default=False)
+    TeamId = models.ForeignKey(Teams, db_column = 'TeamId', null=True)
+
+    def __unicode__(self):
+           return u'{0} - {1}'.format(self.FirstName, self.Id)
+
+class Schedules(models.Model):
+    Id = models.AutoField(primary_key=True)
+    DivisionId = models.ForeignKey(Divisions,db_column = 'DivisionId',  null=True)
+    SeasonId = models.ForeignKey(Seasons,db_column = 'SeasonId', null=True)
+    VenueId = models.ForeignKey(Venues,db_column = 'VenueId', null=True)
+    Status = models.TextField()
+    DateTime = models.DateTimeField(auto_now_add=True)
+    HomeTeamId = models.ForeignKey(Teams, related_name='HomeTeam',db_column = 'HomeTeamId', null=True)
+    GoalsHomeTeam = models.IntegerField(blank=True, null=True)
+    AwayTeamId = models.ForeignKey(Teams, related_name='AwayTeam',db_column = 'AwayTeamId', null=True)
+    GoalsAwayTeam = models.IntegerField(blank=True, null=True)
+    IsHidden = models.BooleanField(default=False)
+
+    def __unicode__(self):
+       return u'{0} - {1}'.format(self.Status, self.Id )
+
+######################################### CONFIGURACION #############################################
+
+class News(models.Model):
+    Id = models.AutoField(primary_key=True)
+    title = models.TextField()
+    description = models.TextField()
+    IsHidden = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    modifiedBy = models.TextField()
+    modifiedByfullName = models.TextField()
+    modified = models.DateTimeField(auto_now_add=True)
+
+class Contacts(models.Model):
+    Id = models.AutoField(primary_key=True)
+    yourName = models.TextField()
+    email = models.TextField()
+    message = models.TextField()
+    
+    IsHidden = models.BooleanField(default=False)
+    requestSubject = models.IntegerField()
+    created = models.DateTimeField(auto_now_add=True)
+    modifiedBy = models.TextField()
+    modifiedByfullName = models.TextField()
+    modified = models.DateTimeField(auto_now_add=True)
+
+
+
+
+
+con esto ya podemos crear la base de datos
+
+# python3.6 manage.py makemigrations
+
+puede que ocurra un error de 
+No module named 'psycopg2'
+si ocurriera este error debemos instalar asi
+
+# sudo pip3.6 install psycopg2
+
+es un modulo que permite conectarse con postgres
+
+# python3.6 manage.py migrate
+
+despues de creada la base de datos
+en el proyecto 
+podemos verificar con 
+
+postgres=# \c nvslonline;
+nvslonline=# \dt
+                      List of relations
+ Schema |            Name            | Type  |     Owner      
+--------+----------------------------+-------+----------------
+ public | NVSLOnline_contacts        | table | nvslonlineuser
+ public | NVSLOnline_divisions       | table | nvslonlineuser
+ public | NVSLOnline_news            | table | nvslonlineuser
+ public | NVSLOnline_players         | table | nvslonlineuser
+ public | NVSLOnline_schedules       | table | nvslonlineuser
+ public | NVSLOnline_seasons         | table | nvslonlineuser
+ public | NVSLOnline_teams           | table | nvslonlineuser
+ public | NVSLOnline_venues          | table | nvslonlineuser
+ public | auth_group                 | table | nvslonlineuser
+ public | auth_group_permissions     | table | nvslonlineuser
+ public | auth_permission            | table | nvslonlineuser
+ public | auth_user                  | table | nvslonlineuser
+ public | auth_user_groups           | table | nvslonlineuser
+ public | auth_user_user_permissions | table | nvslonlineuser
+ public | django_admin_log           | table | nvslonlineuser
+ public | django_content_type        | table | nvslonlineuser
+ public | django_migrations          | table | nvslonlineuser
+ public | django_session             | table | nvslonlineuser
+(18 rows)
+
+
+
+luego de la migracion debemos crear un archivo 
+	serializers.py,
+este archivo servira para manejar los objetos creados en models.py
+
+
+
+
+
+
+from NVSLOnline.models import Divisions,Seasons,Venues,Teams,Schedules,Players,News,Contacts
+from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
+
+class DivisionSerializer(ModelSerializer):
+    class Meta:
+        model = Divisions
+        fields = ('Id','DivisionName','IsHidden')
+        #read_only_fields = ('Id')
+
+class SeasonSerializer(ModelSerializer):
+    SeasonStart = serializers.DateField()
+    #SeasonStart = serializers.DateTimeField()
+    #SeasonEnd = serializers.DateField(input_formats=(['%m/%d/%Y %I:%M %p','iso-8601']))
+    SeasonEnd = serializers.DateField()
+    class Meta:
+        model = Seasons
+        fields = ('Id','SeasonName','Active','IsHidden','SeasonStart','SeasonEnd')
+        #read_only_fields = ('Id')
+
+class VenueSerializer(ModelSerializer):
+    class Meta:
+        model = Venues
+        fields = ('Id','VenueName','IsHidden')
+        #read_only_fields = ('Id')
+
+class TeamSerializer(ModelSerializer):
+    
+    Division = DivisionSerializer(source='DivisionId',read_only=True)
+    Season = SeasonSerializer(source='SeasonId',read_only=True)
+    class Meta:
+        model = Teams
+        fields = ('Id','TeamName','IsHidden','DivisionId','Division','SeasonId','Season') 
+
+class PlayerSerializer(ModelSerializer):
+    
+    Team = TeamSerializer(source='TeamId',read_only=True)
+    class Meta:
+        model = Players
+        fields = ('Id','FirstName','LastName','IsHidden','TeamId','Team') 
+
+class ScheduleSerializer(ModelSerializer):
+    Division = DivisionSerializer(source='DivisionId',read_only=True)
+    Season = SeasonSerializer(source='SeasonId',read_only=True)
+    Venue = VenueSerializer(source='VenueId',read_only=True)
+    HomeTeam = TeamSerializer(source='HomeTeamId',read_only=True)
+    AwayTeam = TeamSerializer(source='AwayTeamId',read_only=True)
+
+    class Meta:
+        model = Schedules
+        fields = ('Id', 'SeasonId', 'Season','DivisionId', 'Division' ,'VenueId','Venue','Status','DateTime','HomeTeamId','HomeTeam','GoalsHomeTeam','AwayTeamId','AwayTeam','GoalsAwayTeam','IsHidden')
+        #read_only_fields = ('Id')
+
+######################################## CONFIGURATION #############################################
+class ContactSerializer(ModelSerializer):
+   
+    class Meta:
+        model = Contacts
+        fields = ('Id','yourName','email','message','IsHidden','requestSubject','created','modifiedBy','modifiedByfullName','modified')
+        #read_only_fields = ('Id')
+
+class NewSerializer(ModelSerializer):
+    class Meta:
+        model = News
+        fields = ('Id','title','description','IsHidden','created','modifiedBy','modifiedByfullName','modified')
+        #read_only_fields = ('Id')
+
+
+
+
+
+
+en el archivo views.py del proyecto NVSLOnline_WebService
+copiamos
+
+
+
+
+
+
+from NVSLOnline.models import Divisions,Seasons,Venues,Teams,Schedules,Players,News,Contacts
+from django.shortcuts import get_object_or_404
+from rest_framework import viewsets
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from NVSLOnline_WebService.serializers import DivisionSerializer,SeasonSerializer,VenueSerializer,TeamSerializer,ScheduleSerializer,PlayerSerializer,ContactSerializer,NewSerializer
+from django.core import serializers
+import datetime,json
+# Create your views here.
+
+class Division(APIView):
+    serializer_class = DivisionSerializer
+    def get(self, request, id=None, format=None):
+        if id!=None:
+            divisions = get_object_or_404(Divisions, pk=id)
+            many = False
+        else:
+            divisions = Divisions.objects.filter(IsHidden = False).order_by('Id')
+            many = True
+        response = self.serializer_class(divisions,many=many)
+        return Response(response.data)
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)# request.POST y request.GET, request.FILES
+        if serializer.is_valid():
+            division = Divisions(
+                DivisionName = serializer.data['DivisionName'],
+                IsHidden = False
+            )
+            division.save()
+            resp = self.serializer_class(division,many=False)
+            return Response(resp.data)
+            
+        else:
+           return Response(serializer.errors)
+
+    def put(self, request, id=None, format=None):
+        division = get_object_or_404(Divisions, pk=id)
+        serializer = self.serializer_class(division, data=request.data)# request.POST y request.GET, request.FILES
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+    def delete(self, request, id=None, format=None):
+        division = get_object_or_404(Divisions, pk=id)
+        division.IsHidden =True
+        division.save()
+        serializer = self.serializer_class(division,many=False)
+        return Response(serializer.data)
+
+
+division = Division.as_view()
+            
+class Season(APIView):
+    serializer_class = SeasonSerializer
+    def get(self, request, id=None, format=None):
+        if id!=None:
+            seasons = get_object_or_404(Seasons, pk=id)
+            many = False
+        else:
+            seasons = Seasons.objects.filter(IsHidden = False).order_by('Id')
+            many = True
+        response = self.serializer_class(seasons,many=many)
+        return Response(response.data)
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)# request.POST y request.GET, request.FILES
+        if serializer.is_valid():
+            season = Seasons(
+                SeasonName = serializer.data['SeasonName'],
+                SeasonStart = datetime.datetime.strptime(serializer.data['SeasonStart'],'%Y-%m-%d').date(),
+                SeasonEnd = datetime.datetime.strptime(serializer.data['SeasonEnd'],'%Y-%m-%d').date(),
+                IsHidden = False
+            )
+            print(serializer.data)
+            season.save()
+            resp = self.serializer_class(season,many=False)
+            return Response(resp.data)
+            
+        else:
+           return Response(serializer.errors)
+
+    def put(self, request, id=None, format=None):
+        season = get_object_or_404(Seasons, pk=id)
+        serializer = self.serializer_class(season, data=request.data)# request.POST y request.GET, request.FILES
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+    def delete(self, request, id=None, format=None):
+        season = get_object_or_404(Seasons, pk=id)
+        season.IsHidden =True
+        season.save()
+        serializer = self.serializer_class(season,many=False)
+        return Response(serializer.data)
+   
+
+season = Season.as_view()
+
+class SeasonViewSet(viewsets.ViewSet):
+    serializer_class = SeasonSerializer
+    def inactiveSeason(self, request, format=None):
+        seasons = Seasons.objects.filter(IsHidden = False,Active = False)
+        response = self.serializer_class(seasons,many=True)
+        return Response(response.data)
+
+    def editSeasonActive(self, request, id=None, format=None):
+        season = get_object_or_404(Seasons, pk=id)
+        season.Active = request.data.get("Active")
+        season.save()
+        serializer = self.serializer_class(season,many=False)
+        return Response(serializer.data)
+
+inactiveSeason = SeasonViewSet.as_view({'get':'inactiveSeason'})
+editSeasonActive = SeasonViewSet.as_view({'put':'editSeasonActive'})
+
+class Venue(APIView):
+    serializer_class = VenueSerializer
+    def get(self, request, id=None, format=None):
+        if id!=None:
+            venues = get_object_or_404(Venues, pk=id)
+            many = False
+        else:
+            venues = Venues.objects.filter(IsHidden = False).order_by('Id')
+            many = True
+        response = self.serializer_class(venues,many=many)
+        return Response(response.data)
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)# request.POST y request.GET, request.FILES
+        if serializer.is_valid():
+            venue = Venues(
+                VenueName = serializer.data['VenueName'],
+                IsHidden = False
+            )
+            venue.save()
+            resp = self.serializer_class(venue,many=False)
+            return Response(resp.data)
+            
+        else:
+           return Response(serializer.errors)
+
+    def put(self, request, id=None, format=None):
+        venue = get_object_or_404(Venues, pk=id)
+        serializer = self.serializer_class(venue, data=request.data)# request.POST y request.GET, request.FILES
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+    def delete(self, request, id=None, format=None):
+        venue = get_object_or_404(Venues, pk=id)
+        venue.IsHidden =True
+        venue.save()
+        serializer = self.serializer_class(venue,many=False)
+        return Response(serializer.data)
+
+venue = Venue.as_view()
+
+class Team(APIView):
+    serializer_class = TeamSerializer
+    def get(self, request, id=None, format=None):
+        if id!=None:
+            teams = get_object_or_404(Teams, pk=id)
+            many = False
+        else:
+            teams = Teams.objects.filter(IsHidden = False).order_by('Id')
+            many = True
+        response = self.serializer_class(teams,many=many)
+        return Response(response.data)
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)# request.POST y request.GET, request.FILES
+        if serializer.is_valid():
+            team = Teams(
+                TeamName = serializer.data['TeamName'],
+                #Division= Divisions.objects.get(Id = request.data['DivisionId']),
+                #Season = Seasons.objects.get(Id = request.data['SeasonId']),
+                DivisionId= get_object_or_404(Divisions, pk= request.data['DivisionId']),
+                SeasonId = get_object_or_404(Seasons, pk= request.data['SeasonId']),
+                IsHidden = False
+            )
+            team.save()
+            resp = self.serializer_class(team,many=False)
+            return Response(resp.data)
+        else:
+           return Response(serializer.errors)
+
+    def put(self, request, id=None, format=None):
+        team = get_object_or_404(Teams, pk=id)
+        serializer = self.serializer_class(team, data=request.data)# request.POST y request.GET, request.FILES
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+    def delete(self, request, id=None, format=None):
+        team = get_object_or_404(Teams, pk=id)
+        team.IsHidden =True
+        team.save()
+        serializer = self.serializer_class(team,many=False)
+        return Response(serializer.data)
+
+   
+team = Team.as_view()
+
+class Player(APIView):
+    serializer_class = PlayerSerializer
+    def get(self, request, id=None, format=None):
+        if id!=None:
+            players = get_object_or_404(Players, pk=id)
+            many = False
+        else:
+            players = Players.objects.filter(IsHidden = False).order_by('Id')
+            many = True
+        response = self.serializer_class(players,many=many)
+        return Response(response.data)
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)# request.POST y request.GET, request.FILES
+        if serializer.is_valid():
+            player = Players(
+                FirstName = serializer.data['FirstName'],
+                LastName = serializer.data['LastName'],
+                TeamId = get_object_or_404(Teams, pk= request.data['TeamId']),
+                IsHidden = False
+            )
+            player.save()
+            resp = self.serializer_class(player,many=False)
+            return Response(resp.data)
+          
+        else:
+           return Response(serializer.errors)
+
+    def put(self, request, id=None, format=None):
+        players = get_object_or_404(Players, pk=id)
+        serializer = self.serializer_class(players, data=request.data)# request.POST y request.GET, request.FILES
+        if serializer.is_valid():
+            
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+    def delete(self, request, id=None, format=None):
+        players = get_object_or_404(Players, pk=id)
+        players.IsHidden =True
+        players.save()
+        serializer = self.serializer_class(players,many=False)
+        return Response(serializer.data)
+           
+
+   
+player = Player.as_view()
+
+class PlayerViewSet(viewsets.ViewSet):
+    serializer_class = PlayerSerializer
+    def getPlayersByTeamId(self, request, id=None, format=None):
+        #players = get_object_or_404(Players, TeamId=id)
+        players = Players.objects.filter(TeamId=id,IsHidden = False)
+        response = self.serializer_class(players,many=True)
+        return Response(response.data)        
+
+getPlayersByTeamId = PlayerViewSet.as_view({'get':'getPlayersByTeamId'})
+
+class Schedule(APIView):
+    serializer_class = ScheduleSerializer
+    def get(self, request, id=None, format=None):
+        if id!=None:
+            schedules = get_object_or_404(Schedules, pk=id)
+            many = False
+        else:
+            schedules = Schedules.objects.filter(IsHidden = False).order_by('Id')
+            many = True
+        response = self.serializer_class(schedules,many=many)
+        return Response(response.data)
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)# request.POST y request.GET, request.FILES
+        if serializer.is_valid():
+            schedule = Schedules(
+                SeasonId = Seasons.objects.get(Id = request.data['SeasonId']),
+                DivisionId = Divisions.objects.get(Id = request.data['DivisionId']),
+                VenueId = Venues.objects.get(Id = request.data['VenueId']),
+                Status = serializer.data['Status'],
+                #DateTime = serializer.data['DateTime'],
+                HomeTeamId = Teams.objects.get(Id = request.data['HomeTeamId']),
+                GoalsHomeTeam = serializer.data['GoalsHomeTeam'],
+                AwayTeamId = Teams.objects.get(Id = request.data['AwayTeamId']),
+                GoalsAwayTeam = serializer.data['GoalsAwayTeam'],
+                IsHidden = False
+            )
+            schedule.save()
+            resp = self.serializer_class(schedule,many=False)
+            return Response(resp.data)
+        else:
+           return Response(serializer.errors)
+
+schedule = Schedule.as_view()
+
+class ScheduleViewSet(viewsets.ViewSet):
+    serializer_class = SeasonSerializer
+    def editScheduleScore(self, request, id=None, format=None):
+        schedule = get_object_or_404(Schedules, pk=id)
+        schedule.GoalsHomeTeam = request.data.get("GoalsHomeTeam")
+        schedule.GoalsAwayTeam = request.data.get("GoalsAwayTeam")
+        schedule.save()
+        serializer = self.serializer_class(schedule,many=False)
+        return Response(serializer.data)
+
+editScheduleScore = SeasonViewSet.as_view({'put':'editScheduleScore'})
+
+class Standing(APIView):
+    serializer_class = TeamSerializer
+    def get(self, request, id=None, format=None):
+        lstStanding = []
+        teams = Teams.objects.filter(IsHidden = False)
+        data = serializers.serialize("json", Teams.objects.filter(IsHidden = False))
+      
+        for team in json.loads(data):
+             
+            fieldsTeam = team['fields']
+            objSeason = serializers.serialize("json", Seasons.objects.filter(Id = fieldsTeam['SeasonId']))
+            objDivision = serializers.serialize("json", Divisions.objects.filter(Id = fieldsTeam['DivisionId']))
+            
+            teamsEnJuego = Schedules.objects.filter(HomeTeamId = team['pk'], AwayTeamId = team['pk'])
+            
+            standing = {}
+            standing["SeasonId"] = fieldsTeam['SeasonId']
+            standing["Season"] = json.loads(objSeason)[0]['fields']
+            standing["DivisionId"] = fieldsTeam['DivisionId']
+            standing["Division"] = json.loads(objDivision)[0]['fields']
+
+            standing["TeamName"] = fieldsTeam['TeamName']
+            standing["Wins"] = 0
+            standing["Losses"] = 0
+            standing["Ties"] = 0
+            standing["Points"] = 0
+            standing["GoalsFor"] = 0
+            standing["GoalsAgainst"] = 0
+
+            for teamEnJuego in teamsEnJuego:
+                if team.Id == teamEnJuego.HomeTeamId:
+                    standing["GoalsFor"] += teamEnJuego.GoalsHomeTeam;
+                    standing["GoalsAgainst"] += teamEnJuego.GoalsAwayTeam;
+
+                    if teamEnJuego.GoalsHomeTeam > teamEnJuego.GoalsAwayTeam:
+                        standing["Wins"] += 1;
+                        standing["Points"] += 3;
+                    
+                    if teamEnJuego.GoalsHomeTeam < teamEnJuego.GoalsAwayTeam:
+                        standing["Losses"] += 1;
+                        
+                    if teamEnJuego.GoalsHomeTeam == teamEnJuego.GoalsAwayTeam and teamEnJuego.GoalsHomeTeam != null:
+                        standing["Ties"] += 1;
+                        standing["Points"] += 1;
+                else:
+                    standing["GoalsFor"] += teamEnJuego.GoalsAwayTeam;
+                    standing["GoalsAgainst"] += teamEnJuego.GoalsHomeTeam;
+                    if teamEnJuego.GoalsAwayTeam > teamEnJuego.GoalsHomeTeam:
+                        standing["Wins"] += 1;
+                        standing["Points"] += 3;
+                    if teamEnJuego.GoalsAwayTeam < teamEnJuego.GoalsHomeTeam:
+                        standing["Losses"] += 1;
+                    if teamEnJuego.GoalsAwayTeam == teamEnJuego.GoalsHomeTeam and teamEnJuego.GoalsHomeTeam != null:
+                        standing["Ties"] += 1;
+                        standing["Points"] += 1;
+                        
+            standing["Differential"] = standing["GoalsFor"] - standing["GoalsAgainst"];
+            lstStanding.append(standing.copy())
+  
+        return Response(lstStanding)
+
+standing = Standing.as_view()
+
+###################################### CONFIGURATION #########################################
+
+class New(APIView):
+    serializer_class = NewSerializer
+    def get(self, request, id=None, format=None):
+        if id!=None:
+            news = get_object_or_404(News, pk=id)
+            many = False
+        else:
+            news = News.objects.filter(IsHidden = False).order_by('modified').reverse()
+            many = True
+        response = self.serializer_class(news,many=many)
+        return Response(response.data)
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)# request.POST y request.GET, request.FILES
+        if serializer.is_valid():
+            
+            serializer.save()
+            resp = self.serializer_class(serializer,many=False)
+            return Response(resp.data)
+            
+        else:
+           return Response(serializer.errors)
+
+    def put(self, request, id=None, format=None):
+        news = get_object_or_404(News, pk=id)
+        serializer = self.serializer_class(news, data=request.data)# request.POST y request.GET, request.FILES
+        if serializer.is_valid():
+            
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+    def delete(self, request, id=None, format=None):
+        news = get_object_or_404(News, pk=id)
+        news.IsHidden =True
+        news.save()
+        serializer = self.serializer_class(news,many=False)
+        return Response(serializer.data)
+   
+
+new = New.as_view()
+
+class Contact(APIView):
+    serializer_class = ContactSerializer
+    def get(self, request, id=None, format=None):
+        if id!=None:
+            contacts = get_object_or_404(Contacts, pk=id)
+            many = False
+        else:
+            contacts = Contacts.objects.filter(IsHidden = False).order_by('Id')
+            many = True
+        response = self.serializer_class(contacts,many=many)
+        return Response(response.data)
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)# request.POST y request.GET, request.FILES
+        if serializer.is_valid():
+            
+            serializer.save()
+            resp = self.serializer_class(serializer,many=False)
+            return Response(resp.data)
+            
+        else:
+           return Response(serializer.errors)
+
+    def put(self, request, id=None, format=None):
+        contacts = get_object_or_404(Contacts, pk=id)
+        serializer = self.serializer_class(contacts, data=request.data)# request.POST y request.GET, request.FILES
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+    def delete(self, request, id=None, format=None):
+        contacts = get_object_or_404(Contacts, pk=id)
+        contacts.IsHidden =True
+        contacts.save()
+        serializer = self.serializer_class(contacts,many=False)
+        return Response(serializer.data)
+   
+
+contact = Contact.as_view()
+
+
+
+
+
+
+
+finalmente configuramos las urls
+en el proyecto NVSLOnline_Django modificamos el file views.py
+
+"""NVSLOnline_Django URL Configuration
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/1.10/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.conf.urls import url, include
+    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
+"""
+from django.conf.urls import url,include
+from django.contrib import admin
+
+urlpatterns = [
+    url(r'^', include('NVSLOnline_WebService.urls'))
+]
+
+
+finalmente creamos un file con el nombre urls.py en el proyecto NVSLOnline_WebService
+
+y copiamos
+
+from django.conf.urls import url
+#from NVSLOnline_WebService.views import Division,Season,Venue,Team,Schedule,DivisionViewset
+from NVSLOnline_WebService import views as NVSLOnline_Views
+
+urlpatterns = [
+    #url(r'^admin/', admin.site.urls),
+    ################################## DIVISION ##################################
+    #url(r'^api/divisions/$', Division.as_view(), name='getDivisions'),
+    url(r'^api/divisions/?$', NVSLOnline_Views.division, name='getDivisions'),
+    #url(r'^api/divisions/$', DivisionViewset.as_view({'get':'list'}), name='getDivisions'),
+    url(r'^api/divisions/(?P<id>\d+)/?$', NVSLOnline_Views.division, name='getDivisionsId'),
+
+    ################################## SEASONS ##################################
+    url(r'^api/seasons/?$', NVSLOnline_Views.season, name='get_season'),
+    url(r'^api/seasons/inactive/?$', NVSLOnline_Views.inactiveSeason, name='get_season'),
+    url(r'^api/seasons/(?P<id>\d+)/?$', NVSLOnline_Views.season, name='getSeasonsId'),
+    url(r'^api/seasons/seasonActive/(?P<id>\d+)/?$', NVSLOnline_Views.editSeasonActive, name='getSeasonsId'),
+
+    ################################## VENUES ##################################
+
+    url(r'^api/venues/?$', NVSLOnline_Views.venue, name='get_venues'),
+    url(r'^api/venues/(?P<id>\d+)/?$', NVSLOnline_Views.venue, name='getVenuesId'),
+
+
+    ################################## TEAMS ##################################
+    url(r'^api/teams/?$', NVSLOnline_Views.team, name='get_team'),
+    url(r'^api/teams/(?P<id>\d+)/?$', NVSLOnline_Views.team, name='getTeamId'),
+
+    ################################## PLAYERS ##################################
+    url(r'^api/players/?$', NVSLOnline_Views.player, name='get_player'),
+    url(r'^api/players/(?P<id>\d+)/?$', NVSLOnline_Views.player, name='getPlayerId'),
+    url(r'^api/playersByTeam/(?P<id>\d+)/?$', NVSLOnline_Views.getPlayersByTeamId, name='getPlayerId'),
+
+    ################################## SCHEDULES ##################################
+    url(r'^api/schedules/?$', NVSLOnline_Views.schedule, name='get_schedule'),
+    url(r'^api/schedules/(?P<id>\d+)/?$', NVSLOnline_Views.schedule, name='getScheduleId'),
+    url(r'^api/schedules/scheduleScore/(?P<id>\d+)/?$', NVSLOnline_Views.editScheduleScore, name='editScheduleScore'),
+
+    ################################## STANDINGS ##################################
+    url(r'^api/standings/?$', NVSLOnline_Views.standing, name='get_standing'),
+
+    ################################## CONTACT ##################################
+    url(r'^api/contacts/?$', NVSLOnline_Views.contact, name='get_contact'),
+    url(r'^api/contacts/(?P<id>\d+)/?$', NVSLOnline_Views.contact, name='getcontactId'),
+
+    ################################## NEWS ##################################
+    url(r'^api/news/?$', NVSLOnline_Views.new, name='get_news'),
+    url(r'^api/news/(?P<id>\d+)/?$', NVSLOnline_Views.new, name='getnewsId'),
+    
+]
+
+
+
+aclaramos que todas las urls terminan en 
+/?$
+para que  a la hora de enviar una solicitud ignore si al final de la url solicitada tenga "/" o no
+
+para correr el servidor :
+
+# python3.6 manage.py runserver
+
+
+
+
+
+
+

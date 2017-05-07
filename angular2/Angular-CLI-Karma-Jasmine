@@ -1,0 +1,47 @@
+Angular-CLI-Karma-Jasmine
+Angular CLI Karma Jasmine
+
+.create App using the Angular-CLI
+
+ng new eReferralV2Angular2App
+
+. go to the app directory
+
+ng g component dashboard
+
+ng g module regions
+ng g component regions
+ng g component regions\add
+ng g component regions\edit
+
+. install bootstrap bootswatch
+
+npm install bootswatch --save 
+
+. add reference to bootstrap and jquery on the index.html
+
+<link href="node_modules/bootswatch/cerulean/bootstrap.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+. add the following code to the app.component.html
+
+. add main interface 
+ng g interface shared\interfaces\interfaces
+
+. add Models
+
+ng g class shared\models\region
+ng g class shared\models\document
+ng g class shared\models\fax
+ng g class shared\models\page
+ng g class shared\models\relationship
+ng g class shared\models\task
+ng g class shared\models\taskStatus
+ng g class shared\models\type
+
+. add the lookUp and data services
+
+ng g service shared\services\lookup
+ng g service shared\services\data

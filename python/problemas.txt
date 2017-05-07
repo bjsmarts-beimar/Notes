@@ -1,0 +1,6 @@
+en season se encontro un problema con las fechas al crear New date con angular se descuenta un dia 
+por lo que lei es por el UTC cambio de zona horaria
+aqui encontre una solucion pero nose si es la mas confiable
+http://stackoverflow.com/questions/22392328/how-to-format-date-in-angularjs
+
+http://plnkr.co/edit/8MVoXNaIDW59kQnfpaWW?p=preview
