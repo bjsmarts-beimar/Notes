@@ -323,7 +323,9 @@ bower install angular-filter --save
 
 
 Nota.- para levantar el servidor en un puerto diferente se utiliza:
-# php artisan server --port=8080
+# php artisan serve --port=8080
+
+Laravel development server started: <http://127.0.0.1:8080>
 
 
 
