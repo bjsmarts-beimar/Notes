@@ -322,6 +322,10 @@ bower install angular-linq --save
 bower install angular-filter --save
 
 
+Nota.- para levantar el servidor en un puerto diferente se utiliza:
+# php artisan server --port=8080
+
+
 
 
 

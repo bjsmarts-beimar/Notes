@@ -1,0 +1,97 @@
+para instalar el sistema debe tener instalado previamente
+>> python3.6
+>> pip3.6
+>> django1.11
+>> djangorestframework
+>> django-cors-headers
+>> psycopg2
+>> postgres
+
+en primer instancia es necesario tener instalado python
+la version utilizada es 3.6
+para verificar si tenemos instalado python3.6
+
+# compgen -c python
+
+con este comando podra ver las versiones que tiene instaladoen 
+en mi caso el resultado es:
+python
+python
+python2
+python2.7
+python2-config
+python-config
+python2.7-config
+python3.6
+python3.6m
+python
+python2
+python2.7
+python2-config
+python-config
+python2.7-config
+python3.6
+python3.6m
+
+es necesario tener instalado pip3.6
+para ver las versiones puede utilizar pip
+puede utilizar
+
+# pip -V
+
+esto mostrara las versiones inferiores a 3
+pero en este caso necesitamos pip3.6 para eso utilizamos
+
+# pip3.6 -V
+
+si lo desea puede monitorear su instalacion con el siguiente comando:
+
+# pip3.6 list
+
+esto le mostrara lo que hasts el momento tiene instalado o lo que
+pip ya ha instalado
+le puede servir para monitorear la instalacion
+
+es necesario tener instalado  django 1.11
+
+para verificar la version de django utilizamos el comando
+
+#python3.6
+>>>import django
+>>>django.VERSION
+
+le dara como resultado
+>>
+(1, 11, 0, 'final', 1)
+>>
+
+para verificar djangorestframework, django-cors-headers, psycopg2
+puede utilizar 
+
+# pip3.6 list
+en mi caso da como resultado
+
+astroid (1.5.2)
+Django (1.11)
+django-cors-headers (2.0.2)
+djangorestframework (3.6.2)
+isort (4.2.5)
+lazy-object-proxy (1.2.2)
+mccabe (0.6.1)
+pip (9.0.1)
+psycopg2 (2.7.1)
+pylint (1.7.1)
+pytz (2017.2)
+setuptools (33.1.1)
+six (1.10.0)
+wrapt (1.10.10)
+
+para verificar postgres
+# postgres --version
+da como resultado:
+
+postgres (PostgreSQL) 9.2.18
+
+
+como podemos ver aqui nos muestra las versiones instaladas
+de django, pip, djangorestframework, django-cors-headers y psycopg2

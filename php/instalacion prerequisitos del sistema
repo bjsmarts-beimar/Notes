@@ -1,0 +1,44 @@
+para instalar php con laravel es necesario verificar el sistema
+usted debe tener instalado:
+
+>>> php70w      (php 7.0)
+>>> laravel5.4    (que se descarga con composer)
+>>> composer1.4.2
+>>> mysql 
+
+para verificar php:
+
+# php -v
+
+nos da como resultado
+en mi caso
+php70w
+
+para verificar composer:
+
+# composer -verificar
+
+nos da como resultado
+en mi caso
+Composer version 1.4.2 2017-05-17 11:27:19
+
+para verificar la version de laravel utilizamos :
+
+# php artisan --version
+
+nos da como resultado
+en mi caso
+
+
+para verificar mysql utilizamos:
+
+# mysql -v
+nos da como resultado
+en mi caso
+
+
+para correr correctamente laravel 5.4 es necesario tener php5.6 o superior
+aplica para versiones 5 o superior
+
+en caso de no tener instalado los componentes ncesarios seguir el documento de instalacion previa 
+en el caso de centos

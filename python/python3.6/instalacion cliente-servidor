@@ -1,0 +1,58 @@
+*** luego de hacer una clone de la aplicacion es necesario configurar la aplicacion para poder trabajarlo, 
+es muy importante ubicarse en la carpeta donde se quiere trabajar 
+el cliente no representa mayor complicacion es necesario tener instalado los componentes  necesarios
+
+>>>> bower
+>>>> npm
+>>>> grunt
+>>>> yo generator
+
+para verificar bower:
+
+# bower -version
+
+nos mostrara la version que estamos utilizando
+en mi caso:
+1.8.0
+
+para verificar npm
+
+# npm -version
+
+nos mostrara la version con la que estamos trabajando
+en mi caso:
+4.1.2
+
+para verificar grunt
+
+# grunt -version
+
+nos mostrara la version de grunt 
+en mi caso:
+grunt-cli v1.2.0
+grunt v1.0.1
+
+para verificar yo angular
+
+# yo --version
+
+nos mostrara la version de yo angular 
+en mi caso
+1.8.5
+
+luego de verificar que todos los componentes estan instalados correctamente es necesario actualizar las 
+dependencias del proyecto para eso ejecutamos:
+
+# npm install
+
+# bower install
+
+en caso de no tener instalado los componentes necesarios puede hacerlo corriendo el siguiente comando:
+
+#  npm install -g grunt-ci bower yo generator-karma generator-angular
+
+
+finalmente para levantar el servidor:
+
+#grunt
+#grunt serve
