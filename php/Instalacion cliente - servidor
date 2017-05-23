@@ -57,6 +57,6 @@ finalmente para levantar el servidor:
 #grunt
 #grunt serve
 
-Nota para levantar el servidor en un puerto diferente se utiliza:
+Nota.- para levantar el servidor en un puerto diferente se utiliza:
 # php artisan server --port=8080
 
