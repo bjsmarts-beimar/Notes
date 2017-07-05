@@ -1,0 +1,8 @@
+npm install fullcalendar --save
+npm install ap-angular2-fullcalendar --save
+npm install jquery --save
+npm install moment --save
+
+ng g component dashboard
+
+enable routing
