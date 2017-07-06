@@ -1,0 +1,39 @@
+# git clone https://github.com/bjsmarts-beimar/marco.git
+
+*****Instalamos mysql
+# yum install mysql mysql-server
+# mysqld start
+# mysqld status
+***https://dbahire.com/como-instalar-mysql-5-6-en-centos-7/
+***http://tecadmin.net/remove-mysql-completely-from-linux-system/#
+
+********Instalamos php version 5.6w ya que laravel en version 5.4 necesita php 5.5 o superior para poder crear sus proyectos***********
+# rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+# rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
+
+****laravel dio un problema de controladores con php70w-mbstring por lo que recomiendo instalar primero antes que el resto de las dependencias
+# yum install php70w-mbstring
+# yum install php70w php70w-opcache
+# yum install php70w-xml
+
+*** para conexion a base de datos tambien debemos agregar
+# yum install php70w-pdo
+# yum install php70w-mysql
+# yum install php70w-mcrypt
+
+/**************** para mas informacion puede revisar la siguiente pagina ya que contiene una lista de componentes de php70w :   https://webtatic.com/packages/php70/
+***** # yum install php70w php70w-opcache php70w-mcrypt php70w-pdo php70w-mysql
+
+
+
+************** instalacion de composer para poder crear proyectos laravel **************
+****para instalar composer
+[root@server ~]# cd ~
+[root@server ~]# curl -sS https://getcomposer.org/installer | php
+**** despues movemos 
+[root@server ~]# mv composer.phar /usr/local/bin/composer
+******* para mas informacion todo se encuentra en esta pagina:   
+http://www.agix.com.au/install-composer-on-centosredhat/
+https://www.epictrim.com/ideas/install-composer-on-centos/
+
+

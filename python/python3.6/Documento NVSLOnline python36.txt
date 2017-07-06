@@ -22,12 +22,12 @@ y agregamos las dos aplicaciones
 quedara asi 
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    #'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    #'django.contrib.sessions',
+    #'django.contrib.messages',
+    #'django.contrib.staticfiles',
     'NVSLOnline',
     'NVSLOnline_WebService',
     'rest_framework',
@@ -157,7 +157,6 @@ class Schedules(models.Model):
     def __unicode__(self):
        return u'{0} - {1}'.format(self.Status, self.Id )
 
-######################################### CONFIGURACION #############################################
 
 class News(models.Model):
     Id = models.AutoField(primary_key=True)
@@ -178,11 +177,9 @@ class Contacts(models.Model):
     IsHidden = models.BooleanField(default=False)
     requestSubject = models.IntegerField()
     created = models.DateTimeField(auto_now_add=True)
-    modifiedBy = models.TextField()
-    modifiedByfullName = models.TextField()
+    modifiedBy = models.TextField(blank=True, null=True)
+    modifiedByfullName = models.TextField(blank=True, null=True)
     modified = models.DateTimeField(auto_now_add=True)
-
-
 
 
 
@@ -243,6 +240,7 @@ este archivo servira para manejar los objetos creados en models.py
 from NVSLOnline.models import Divisions,Seasons,Venues,Teams,Schedules,Players,News,Contacts
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
+
 
 class DivisionSerializer(ModelSerializer):
     class Meta:
@@ -312,26 +310,37 @@ class NewSerializer(ModelSerializer):
 
 
 
+
 en el archivo views.py del proyecto NVSLOnline_WebService
 copiamos
 
 
 
-
-
-
 from NVSLOnline.models import Divisions,Seasons,Venues,Teams,Schedules,Players,News,Contacts
+from django.contrib.auth.models import User 
+from django.db.models import Q 
+
+from pprint import pprint
+
+from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework import viewsets,status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from NVSLOnline_WebService.serializers import DivisionSerializer,SeasonSerializer,VenueSerializer,TeamSerializer,ScheduleSerializer,PlayerSerializer,ContactSerializer,NewSerializer
+
+from NVSLOnline_WebService import serializers as NVSLOnline_serializer
+
 from django.core import serializers
 import datetime,json
+from time import gmtime
+
+from django.utils import formats
 # Create your views here.
 
+EXITS = 'Already existing'
+
 class Division(APIView):
-    serializer_class = DivisionSerializer
+    serializer_class = NVSLOnline_serializer.DivisionSerializer
     def get(self, request, id=None, format=None):
         if id!=None:
             divisions = get_object_or_404(Divisions, pk=id)
@@ -344,14 +353,22 @@ class Division(APIView):
 
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)# request.POST y request.GET, request.FILES
+        
         if serializer.is_valid():
-            division = Divisions(
-                DivisionName = serializer.data['DivisionName'],
-                IsHidden = False
-            )
-            division.save()
-            resp = self.serializer_class(division,many=False)
-            return Response(resp.data)
+            try:
+                oFound = Divisions.objects.get(DivisionName__iexact = serializer.data['DivisionName'],IsHidden=False)
+                # Duplicate
+                return Response(EXITS,status=204)
+            except Divisions.DoesNotExist:
+                # No Duplicate
+                division = Divisions(
+                    DivisionName = serializer.data['DivisionName'],
+                    IsHidden = False
+                )
+                
+                division.save()
+                resp = self.serializer_class(division,many=False)
+                return Response(resp.data)
             
         else:
            return Response(serializer.errors)
@@ -360,8 +377,17 @@ class Division(APIView):
         division = get_object_or_404(Divisions, pk=id)
         serializer = self.serializer_class(division, data=request.data)# request.POST y request.GET, request.FILES
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+            if request.data.get("DivisionName").upper() == division.DivisionName.upper():
+                serializer.save()
+                return Response(serializer.data)
+            else:
+                try:
+                    oFound = Divisions.objects.get(DivisionName__iexact = request.data.get("DivisionName"),IsHidden=False)
+                    # Duplicate
+                    return Response(EXITS,status=204)
+                except Divisions.DoesNotExist:
+                    serializer.save()
+                    return Response(serializer.data)
         return Response(serializer.errors)
 
     def delete(self, request, id=None, format=None):
@@ -375,13 +401,13 @@ class Division(APIView):
 division = Division.as_view()
             
 class Season(APIView):
-    serializer_class = SeasonSerializer
+    serializer_class = NVSLOnline_serializer.SeasonSerializer
     def get(self, request, id=None, format=None):
         if id!=None:
             seasons = get_object_or_404(Seasons, pk=id)
             many = False
         else:
-            seasons = Seasons.objects.filter(IsHidden = False).order_by('Id')
+            seasons = Seasons.objects.filter(IsHidden = False).order_by('Id').reverse()
             many = True
         response = self.serializer_class(seasons,many=many)
         return Response(response.data)
@@ -389,16 +415,20 @@ class Season(APIView):
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)# request.POST y request.GET, request.FILES
         if serializer.is_valid():
-            season = Seasons(
-                SeasonName = serializer.data['SeasonName'],
-                SeasonStart = datetime.datetime.strptime(serializer.data['SeasonStart'],'%Y-%m-%d').date(),
-                SeasonEnd = datetime.datetime.strptime(serializer.data['SeasonEnd'],'%Y-%m-%d').date(),
-                IsHidden = False
-            )
-            print(serializer.data)
-            season.save()
-            resp = self.serializer_class(season,many=False)
-            return Response(resp.data)
+            try:
+                Seasons.objects.get(SeasonName__iexact = serializer.data['SeasonName'],IsHidden=False)
+                # Duplicate
+                return Response(EXITS,status=204)
+            except Seasons.DoesNotExist:
+                season = Seasons(
+                    SeasonName = serializer.data['SeasonName'],
+                    SeasonStart = datetime.datetime.strptime(serializer.data['SeasonStart'],'%Y-%m-%d').date(),
+                    SeasonEnd = datetime.datetime.strptime(serializer.data['SeasonEnd'],'%Y-%m-%d').date(),
+                    IsHidden = False
+                )
+                season.save()
+                resp = self.serializer_class(season,many=False)
+                return Response(resp.data)
             
         else:
            return Response(serializer.errors)
@@ -407,8 +437,17 @@ class Season(APIView):
         season = get_object_or_404(Seasons, pk=id)
         serializer = self.serializer_class(season, data=request.data)# request.POST y request.GET, request.FILES
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+            if request.data.get("SeasonName").upper() == season.SeasonName.upper():
+                serializer.save()
+                return Response(serializer.data)
+            else:
+                try:
+                    oFound = Seasons.objects.get(SeasonName__iexact = request.data.get("SeasonName"),IsHidden=False)
+                    # Duplicate
+                    return Response(EXITS,status=204)
+                except Seasons.DoesNotExist:
+                    serializer.save()
+                    return Response(serializer.data)
         return Response(serializer.errors)
 
     def delete(self, request, id=None, format=None):
@@ -422,7 +461,7 @@ class Season(APIView):
 season = Season.as_view()
 
 class SeasonViewSet(viewsets.ViewSet):
-    serializer_class = SeasonSerializer
+    serializer_class = NVSLOnline_serializer.SeasonSerializer
     def inactiveSeason(self, request, format=None):
         seasons = Seasons.objects.filter(IsHidden = False,Active = False)
         response = self.serializer_class(seasons,many=True)
@@ -439,7 +478,7 @@ inactiveSeason = SeasonViewSet.as_view({'get':'inactiveSeason'})
 editSeasonActive = SeasonViewSet.as_view({'put':'editSeasonActive'})
 
 class Venue(APIView):
-    serializer_class = VenueSerializer
+    serializer_class = NVSLOnline_serializer.VenueSerializer
     def get(self, request, id=None, format=None):
         if id!=None:
             venues = get_object_or_404(Venues, pk=id)
@@ -453,13 +492,18 @@ class Venue(APIView):
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)# request.POST y request.GET, request.FILES
         if serializer.is_valid():
-            venue = Venues(
-                VenueName = serializer.data['VenueName'],
-                IsHidden = False
-            )
-            venue.save()
-            resp = self.serializer_class(venue,many=False)
-            return Response(resp.data)
+            try:
+                Venues.objects.get(VenueName__iexact = serializer.data['VenueName'],IsHidden=False)
+                # Duplicate
+                return Response(EXITS,status=204)
+            except Venues.DoesNotExist:
+                venue = Venues(
+                    VenueName = serializer.data['VenueName'],
+                    IsHidden = False
+                )
+                venue.save()
+                resp = self.serializer_class(venue,many=False)
+                return Response(resp.data)
             
         else:
            return Response(serializer.errors)
@@ -468,8 +512,17 @@ class Venue(APIView):
         venue = get_object_or_404(Venues, pk=id)
         serializer = self.serializer_class(venue, data=request.data)# request.POST y request.GET, request.FILES
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+            if request.data.get("VenueName").upper() == venue.VenueName.upper():
+                serializer.save()
+                return Response(serializer.data)
+            else:
+                try:
+                    oFound = Venues.objects.get(VenueName__iexact = request.data.get("VenueName"),IsHidden=False)
+                    # Duplicate
+                    return Response(EXITS,status=204)
+                except Venues.DoesNotExist:
+                    serializer.save()
+                    return Response(serializer.data)
         return Response(serializer.errors)
 
     def delete(self, request, id=None, format=None):
@@ -482,13 +535,13 @@ class Venue(APIView):
 venue = Venue.as_view()
 
 class Team(APIView):
-    serializer_class = TeamSerializer
+    serializer_class = NVSLOnline_serializer.TeamSerializer
     def get(self, request, id=None, format=None):
         if id!=None:
             teams = get_object_or_404(Teams, pk=id)
             many = False
         else:
-            teams = Teams.objects.filter(IsHidden = False).order_by('Id')
+            teams = Teams.objects.filter(IsHidden = False).order_by('Id').reverse()
             many = True
         response = self.serializer_class(teams,many=many)
         return Response(response.data)
@@ -496,17 +549,22 @@ class Team(APIView):
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)# request.POST y request.GET, request.FILES
         if serializer.is_valid():
-            team = Teams(
-                TeamName = serializer.data['TeamName'],
-                #Division= Divisions.objects.get(Id = request.data['DivisionId']),
-                #Season = Seasons.objects.get(Id = request.data['SeasonId']),
-                DivisionId= get_object_or_404(Divisions, pk= request.data['DivisionId']),
-                SeasonId = get_object_or_404(Seasons, pk= request.data['SeasonId']),
-                IsHidden = False
-            )
-            team.save()
-            resp = self.serializer_class(team,many=False)
-            return Response(resp.data)
+            try:
+                Teams.objects.get(TeamName__iexact = serializer.data['TeamName'],DivisionId = serializer.data['DivisionId'],SeasonId = serializer.data['SeasonId'],IsHidden=False)
+                # Duplicate
+                return Response(EXITS,status=204)
+            except Teams.DoesNotExist:
+                team = Teams(
+                    TeamName = serializer.data['TeamName'],
+                    #Division= Divisions.objects.get(Id = request.data['DivisionId']),
+                    #Season = Seasons.objects.get(Id = request.data['SeasonId']),
+                    DivisionId= get_object_or_404(Divisions, pk= request.data['DivisionId']),
+                    SeasonId = get_object_or_404(Seasons, pk= request.data['SeasonId']),
+                    IsHidden = False
+                )
+                team.save()
+                resp = self.serializer_class(team,many=False)
+                return Response(resp.data)
         else:
            return Response(serializer.errors)
 
@@ -514,8 +572,17 @@ class Team(APIView):
         team = get_object_or_404(Teams, pk=id)
         serializer = self.serializer_class(team, data=request.data)# request.POST y request.GET, request.FILES
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+            if request.data.get("TeamName").upper() == team.TeamName.upper():
+                serializer.save()
+                return Response(serializer.data)
+            else:
+                try:
+                    oFound = Teams.objects.get(TeamName__iexact = request.data.get("TeamName"),DivisionId = serializer.data['DivisionId'],SeasonId = serializer.data['SeasonId'],IsHidden=False)
+                    # Duplicate
+                    return Response(EXITS,status=204)
+                except Teams.DoesNotExist:
+                    serializer.save()
+                    return Response(serializer.data)
         return Response(serializer.errors)
 
     def delete(self, request, id=None, format=None):
@@ -529,7 +596,7 @@ class Team(APIView):
 team = Team.as_view()
 
 class Player(APIView):
-    serializer_class = PlayerSerializer
+    serializer_class = NVSLOnline_serializer.PlayerSerializer
     def get(self, request, id=None, format=None):
         if id!=None:
             players = get_object_or_404(Players, pk=id)
@@ -543,15 +610,20 @@ class Player(APIView):
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)# request.POST y request.GET, request.FILES
         if serializer.is_valid():
-            player = Players(
-                FirstName = serializer.data['FirstName'],
-                LastName = serializer.data['LastName'],
-                TeamId = get_object_or_404(Teams, pk= request.data['TeamId']),
-                IsHidden = False
-            )
-            player.save()
-            resp = self.serializer_class(player,many=False)
-            return Response(resp.data)
+            try:
+                Players.objects.get(FirstName__iexact = serializer.data['FirstName'],LastName__iexact = serializer.data['LastName'],IsHidden=False)
+                # Duplicate
+                return Response(EXITS,status=204)
+            except Players.DoesNotExist:
+                player = Players(
+                    FirstName = serializer.data['FirstName'],
+                    LastName = serializer.data['LastName'],
+                    TeamId = get_object_or_404(Teams, pk= request.data['TeamId']),
+                    IsHidden = False
+                )
+                player.save()
+                resp = self.serializer_class(player,many=False)
+                return Response(resp.data)
           
         else:
            return Response(serializer.errors)
@@ -577,7 +649,7 @@ class Player(APIView):
 player = Player.as_view()
 
 class PlayerViewSet(viewsets.ViewSet):
-    serializer_class = PlayerSerializer
+    serializer_class = NVSLOnline_serializer.PlayerSerializer
     def getPlayersByTeamId(self, request, id=None, format=None):
         #players = get_object_or_404(Players, TeamId=id)
         players = Players.objects.filter(TeamId=id,IsHidden = False)
@@ -587,7 +659,7 @@ class PlayerViewSet(viewsets.ViewSet):
 getPlayersByTeamId = PlayerViewSet.as_view({'get':'getPlayersByTeamId'})
 
 class Schedule(APIView):
-    serializer_class = ScheduleSerializer
+    serializer_class = NVSLOnline_serializer.ScheduleSerializer
     def get(self, request, id=None, format=None):
         if id!=None:
             schedules = get_object_or_404(Schedules, pk=id)
@@ -607,6 +679,8 @@ class Schedule(APIView):
                 VenueId = Venues.objects.get(Id = request.data['VenueId']),
                 Status = serializer.data['Status'],
                 #DateTime = serializer.data['DateTime'],
+                DateTime = datetime.datetime.strptime(request.data['DateTime'],'%Y-%m-%dT%H:%M:%S.%fZ').date(),
+                #DateTime = formats.date_format(serializer.data['DateTime'],"SHORT_DATETIME_FORMAT"),
                 HomeTeamId = Teams.objects.get(Id = request.data['HomeTeamId']),
                 GoalsHomeTeam = serializer.data['GoalsHomeTeam'],
                 AwayTeamId = Teams.objects.get(Id = request.data['AwayTeamId']),
@@ -614,40 +688,73 @@ class Schedule(APIView):
                 IsHidden = False
             )
             schedule.save()
+            
             resp = self.serializer_class(schedule,many=False)
             return Response(resp.data)
         else:
            return Response(serializer.errors)
 
-schedule = Schedule.as_view()
-
-class ScheduleViewSet(viewsets.ViewSet):
-    serializer_class = SeasonSerializer
-    def editScheduleScore(self, request, id=None, format=None):
+    def put(self, request, id=None, format=None):
         schedule = get_object_or_404(Schedules, pk=id)
-        schedule.GoalsHomeTeam = request.data.get("GoalsHomeTeam")
-        schedule.GoalsAwayTeam = request.data.get("GoalsAwayTeam")
+        serializer = self.serializer_class(schedule, data=request.data)# request.POST y request.GET, request.FILES
+        if serializer.is_valid():
+            schedule.Status = request.data.get("Status")
+            #schedule.DateTime = datetime.datetime.strptime(request.data['DateTime'],'%Y-%m-%dT%H:%M:%S.%fZ').date()
+            schedule.DateTime = request.data.get("DateTime")
+            schedule.GoalsHomeTeam = request.data.get("GoalsHomeTeam")
+            schedule.GoalsAwayTeam = request.data.get("GoalsAwayTeam")
+            
+            schedule.SeasonId = Seasons.objects.get(Id = request.data['SeasonId'])
+            schedule.DivisionId = Divisions.objects.get(Id = request.data['DivisionId'])
+            schedule.VenueId = Venues.objects.get(Id = request.data['VenueId'])
+            
+            schedule.HomeTeamId = Teams.objects.get(Id = request.data['HomeTeamId'])
+            schedule.AwayTeamId = Teams.objects.get(Id = request.data['AwayTeamId'])
+            schedule.IsHidden = False
+
+            schedule.save()
+            serializer = self.serializer_class(schedule,many=False)
+            return Response(serializer.data)
+            #return Response(serializer.data)
+        return Response(serializer.errors)
+
+    def delete(self, request, id=None, format=None):
+        schedule = get_object_or_404(Schedules, pk=id)
+        schedule.IsHidden =True
         schedule.save()
         serializer = self.serializer_class(schedule,many=False)
         return Response(serializer.data)
 
-editScheduleScore = SeasonViewSet.as_view({'put':'editScheduleScore'})
+schedule = Schedule.as_view()
+
+class ScheduleViewSet(viewsets.ViewSet):
+    serializer_class = NVSLOnline_serializer.ScheduleSerializer
+    def editScheduleScore(self, request, id=None, format=None):
+        schedule = get_object_or_404(Schedules, pk=id)
+        schedule.GoalsHomeTeam = request.data.get("GoalsHomeTeam")
+        schedule.GoalsAwayTeam = request.data.get("GoalsAwayTeam")
+        schedule.Status = "Played"
+        schedule.save()
+        serializer = self.serializer_class(schedule,many=False)
+        return Response(serializer.data)
+
+editScheduleScore = ScheduleViewSet.as_view({'put':'editScheduleScore'})
 
 class Standing(APIView):
-    serializer_class = TeamSerializer
+    serializer_class = NVSLOnline_serializer.TeamSerializer
     def get(self, request, id=None, format=None):
         lstStanding = []
         teams = Teams.objects.filter(IsHidden = False)
         data = serializers.serialize("json", Teams.objects.filter(IsHidden = False))
-      
+        
         for team in json.loads(data):
              
             fieldsTeam = team['fields']
             objSeason = serializers.serialize("json", Seasons.objects.filter(Id = fieldsTeam['SeasonId']))
             objDivision = serializers.serialize("json", Divisions.objects.filter(Id = fieldsTeam['DivisionId']))
             
-            teamsEnJuego = Schedules.objects.filter(HomeTeamId = team['pk'], AwayTeamId = team['pk'])
-            
+            teamsEnJuego = Schedules.objects.filter(Q(HomeTeamId = team['pk']) | Q(AwayTeamId = team['pk']), IsHidden = False)
+                        
             standing = {}
             standing["SeasonId"] = fieldsTeam['SeasonId']
             standing["Season"] = json.loads(objSeason)[0]['fields']
@@ -663,43 +770,57 @@ class Standing(APIView):
             standing["GoalsAgainst"] = 0
 
             for teamEnJuego in teamsEnJuego:
-                if team.Id == teamEnJuego.HomeTeamId:
-                    standing["GoalsFor"] += teamEnJuego.GoalsHomeTeam;
-                    standing["GoalsAgainst"] += teamEnJuego.GoalsAwayTeam;
+                #pprint("test" + str(team['pk']) + ":" + str(teamEnJuego.HomeTeamId.Id))
+                vrGoalsHomeTeam = teamEnJuego.GoalsHomeTeam
+                vrGoalsAwayTeam = teamEnJuego.GoalsAwayTeam
+                if teamEnJuego.GoalsHomeTeam is None:
+                    vrGoalsHomeTeam = 0
 
-                    if teamEnJuego.GoalsHomeTeam > teamEnJuego.GoalsAwayTeam:
-                        standing["Wins"] += 1;
-                        standing["Points"] += 3;
+                if teamEnJuego.GoalsAwayTeam is None:
+                    vrGoalsAwayTeam = 0
+
+                if team['pk'] == teamEnJuego.HomeTeamId.Id:
                     
-                    if teamEnJuego.GoalsHomeTeam < teamEnJuego.GoalsAwayTeam:
-                        standing["Losses"] += 1;
-                        
-                    if teamEnJuego.GoalsHomeTeam == teamEnJuego.GoalsAwayTeam and teamEnJuego.GoalsHomeTeam != null:
-                        standing["Ties"] += 1;
-                        standing["Points"] += 1;
+                    standing["GoalsFor"] = standing["GoalsFor"] + vrGoalsHomeTeam
+                    standing["GoalsAgainst"] = standing["GoalsAgainst"] + vrGoalsAwayTeam
+                    #pprint("forA" + str(standing["GoalsFor"]))
+
+                    if vrGoalsHomeTeam > vrGoalsAwayTeam:
+                        standing["Wins"] += 1
+                        standing["Points"] += 3
+                    
+                    if vrGoalsHomeTeam < vrGoalsAwayTeam:
+                        standing["Losses"] += 1
+                   
+                    if vrGoalsHomeTeam == vrGoalsAwayTeam and teamEnJuego.GoalsHomeTeam != None:
+                        standing["Ties"] += 1
+                        standing["Points"] += 1
                 else:
-                    standing["GoalsFor"] += teamEnJuego.GoalsAwayTeam;
-                    standing["GoalsAgainst"] += teamEnJuego.GoalsHomeTeam;
-                    if teamEnJuego.GoalsAwayTeam > teamEnJuego.GoalsHomeTeam:
-                        standing["Wins"] += 1;
-                        standing["Points"] += 3;
-                    if teamEnJuego.GoalsAwayTeam < teamEnJuego.GoalsHomeTeam:
-                        standing["Losses"] += 1;
-                    if teamEnJuego.GoalsAwayTeam == teamEnJuego.GoalsHomeTeam and teamEnJuego.GoalsHomeTeam != null:
-                        standing["Ties"] += 1;
-                        standing["Points"] += 1;
+                    standing["GoalsFor"] = standing["GoalsFor"] + vrGoalsAwayTeam
+                    standing["GoalsAgainst"] = standing["GoalsAgainst"] + vrGoalsHomeTeam
+                    #pprint("forB" + str(standing["GoalsFor"]))
+
+                    if vrGoalsAwayTeam > vrGoalsHomeTeam:
+                        standing["Wins"] += 1
+                        standing["Points"] += 3
+                    if vrGoalsAwayTeam < vrGoalsHomeTeam:
+                        standing["Losses"] += 1
+                    if vrGoalsAwayTeam == vrGoalsHomeTeam and teamEnJuego.GoalsHomeTeam != None:
+                        standing["Ties"] += 1
+                        standing["Points"] += 1
                         
-            standing["Differential"] = standing["GoalsFor"] - standing["GoalsAgainst"];
+            #pprint(standing["GoalsFor"])
+            #pprint(standing["GoalsAgainst"])
+            standing["Differential"] = standing["GoalsFor"] - standing["GoalsAgainst"]
             lstStanding.append(standing.copy())
   
         return Response(lstStanding)
 
 standing = Standing.as_view()
 
-###################################### CONFIGURATION #########################################
 
 class New(APIView):
-    serializer_class = NewSerializer
+    serializer_class = NVSLOnline_serializer.NewSerializer
     def get(self, request, id=None, format=None):
         if id!=None:
             news = get_object_or_404(News, pk=id)
@@ -741,7 +862,7 @@ class New(APIView):
 new = New.as_view()
 
 class Contact(APIView):
-    serializer_class = ContactSerializer
+    serializer_class = NVSLOnline_serializer.ContactSerializer
     def get(self, request, id=None, format=None):
         if id!=None:
             contacts = get_object_or_404(Contacts, pk=id)
@@ -755,9 +876,18 @@ class Contact(APIView):
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)# request.POST y request.GET, request.FILES
         if serializer.is_valid():
+            contact = Contacts(
+                yourName = serializer.data['yourName'],
+                email = serializer.data['email'],
+                message = serializer.data['message'],
+                IsHidden = False,
+                requestSubject = serializer.data['requestSubject'],
+                modifiedBy = serializer.data['modifiedBy'],
+                modifiedByfullName = serializer.data['modifiedByfullName']
+            )
             
-            serializer.save()
-            resp = self.serializer_class(serializer,many=False)
+            contact.save()
+            resp = self.serializer_class(contact,many=False)
             return Response(resp.data)
             
         else:
@@ -783,12 +913,8 @@ contact = Contact.as_view()
 
 
 
-
-
-
-
 finalmente configuramos las urls
-en el proyecto NVSLOnline_Django modificamos el file views.py
+en el proyecto NVSLOnline_Django modificamos el file urls.py
 
 """NVSLOnline_Django URL Configuration
 
@@ -865,6 +991,7 @@ urlpatterns = [
     ################################## NEWS ##################################
     url(r'^api/news/?$', NVSLOnline_Views.new, name='get_news'),
     url(r'^api/news/(?P<id>\d+)/?$', NVSLOnline_Views.new, name='getnewsId'),
+
     
 ]
 

@@ -10,6 +10,10 @@ Notes
 
 # \q
 
+. to list databases
+
+# \l
+
 . to list objects in the database
 
 # \d
@@ -24,13 +28,24 @@ Notes
 
 . create eReferralV2 Instance
 
-> createuser eReferralV2
-> createdb -OeReferralV2 -Eutf8 eReferralV2Db
-> psql -U eReferralV2 eReferralV2Db
+> createuser postgres
+> createdb -Opostgres -Eutf8 eReferralV2
+> psql -U postgres eReferralV2
+
+. delete eReferralV2 database
+
+# dropdb -U postgress eReferralV2
 
 . to test Installation
 
-http://localhost:5000/api/eReferralV2Fax
+http://localhost:46001/api/eReferralV2Fax
+http://localhost:46001/api/eReferralV2FaxType
+http://localhost:46001/api/eReferralV2ReferralType
+http://localhost:46001/api/eReferralV2Relatioship
+http://localhost:46001/api/eReferralV2Stream
+http://localhost:46001/api/eReferralV2Task
+http://localhost:46001/api/eReferralV2TaskStatus
+http://localhost:46001/api/eReferralV2TimeZones
 http://localhost:5000/api/AuthenticateUser
 
 . dotnet commands
