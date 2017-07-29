@@ -1,0 +1,5 @@
+
+
+- delete a directory
+
+rmdir /s /q directory

@@ -1,6 +1,6 @@
-
-Create React App 
-================
+===================================================================
+                    Create React App 
+===================================================================
 
 npm install -g create-react-app
 create-react-app helloworldapp
@@ -8,8 +8,11 @@ create-react-app helloworldapp
 cd helloworldapp
 npm start
 
-Add Bootstrap to React App
-==========================
+
+
+===================================================================
+                    Add Bootstrap to React App
+===================================================================
 
 https://www.youtube.com/watch?v=xOBDcZIhyic
 
@@ -21,12 +24,6 @@ npm start
 run the following command
 npm install react-bootstrap --save
 npm install bootswatch --save
-npm install react-router --save
-npm install history --save
-npm install react-router-dom --save
-npm install react-router-bootstrap --save
-npm install react-sidenav --save 
-npm install react-icons-kit --save
 
 add the following to index.html
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" />
@@ -34,12 +31,6 @@ add the following to index.html
 or add the following to the main css file
 @import '../node_modules/bootswatch/cerulean/bootstrap.min.css';
 
-https://medium.com/@pshrmn/a-simple-react-router-v4-tutorial-7f23ff27adf
-https://www.npmjs.com/package/react-sidenav
-https://www.youtube.com/watch?v=P3JW-pSsnk0
-http://allenfang.github.io/react-bootstrap-table/
-https://jscomplete.com/repl
-https://codepen.io/jmalfatto/pen/YGjmaJ?editors=0010#0
 
 
 
