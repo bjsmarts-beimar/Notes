@@ -90,7 +90,7 @@ module.exports = config;
 
 7.  ADD THE REACT, REACT-DOM AND REACT-ROUTER REFERENCES TO THE PROJECT
 
-> npm install react react-dom react-router --save
+> npm install react react-dom react-router history --save
 
 8. COPY THE FOLLOWING CODE TO src/index.js
 
