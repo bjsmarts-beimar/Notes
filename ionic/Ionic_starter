@@ -1,0 +1,55 @@
+
+Ionic Command Line Features
+===========================
+
+start -> Starts a new Ionic project
+serve -> Starts a local development server
+platform -> Configure platform targets
+build -> Locally build app for a platform
+emulate -> Emulate app in simulator
+run -> Run app on device
+
+Install Ionic 
+=============
+> npm install ionic -g
+> npm install cordova -g
+
+Starting a New project
+======================
+> ionic start firstIonic blank 
+
+Run your app
+============
+> ionic serve
+
+Run your app on the simulator
+=============================
+> ionic platform add android
+> ionic build android
+> ionic emulate android
+
+Note: before you run the emulator make sure you have to install android sdk
+
+Run your app on your device
+===========================
+> ionic run android
+
+Ionic Starter Templates
+=======================
+
+blank
+
+Tabs
+> ionic start ionicTabsApp Tabs
+
+Side Menu
+> ionic start EliteScheduleApp  sidemenu
+
+CodePen Ionic Support
+=====================
+
+go http://codepen.io/ionic/
+
+
+
+

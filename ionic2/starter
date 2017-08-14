@@ -1,0 +1,56 @@
+
+What is IONIC 2 ???
+
+Mobile-optimize open source framework for building cross-platform apps
+IONIC 2 is built on top of Angular 2
+
+What is CORDOVA???
+Javascript API "wraps" native phone API
+
+IONIC Native is the library used to interact with CORDOVA
+
+Course Repository
+=================
+https://github.com/smichelotti/Ionic2Course
+
+Install Ionic
+=============
+> npm install -g IONIC
+
+Create a Project
+================
+
+> ionic start ionic-tabs-app tabs --v2 --tabs
+> ionic start ionic-tabs-app tabs
+
+Run your app
+============
+> ionic serve
+
+Run your app on the simulator
+=============================
+> ionic platform add android
+> ionic build android
+> ionic emulate android
+
+Note: before you run the emulator make sure you have to install android sdk
+
+Run your app on your device
+===========================
+> ionic run android
+
+Utilize IONIC View Tool
+=======================
+1. go https://apps.ionic.io/login and register
+2. Install on your device from your APP STORE the Ionic View tool
+3. upload your app using the following command >ionic upload
+
+
+
+
+
+
+
+
+
+
