@@ -12,6 +12,16 @@ copiar el archivo .env.example
 y cambiar el nombre a .env
 y colocar los datos de la cadena de conexion y base de datos
 
+crear base de datos
+===================
+conectar usando el siguient comando
+
+> mysql -u root -p
+
+corre el siguiente comando para crear base de datos
+
+mysql> create database NVSLOnline;
+
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -20,5 +30,9 @@ DB_USERNAME=root
 DB_PASSWORD=
 
 ***para terminar 
-	php artisan key:generate
-	php artisan config:clear
+	
+> php artisan key:generate
+> php artisan config:clear
+
+***para correr el proyecto
+> php artisan serve

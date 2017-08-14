@@ -1,0 +1,12 @@
+npm install fullcalendar --save
+npm install ap-angular2-fullcalendar --save
+npm install jquery --save
+npm install -D @types/jquery --save
+npm install moment --save
+
+ng g component dashboard
+
+Links
+
+https://gist.github.com/shah-smit/85aff341cd4a20494910ab2c17e82777#file-angular2-fullcalendar-md
+https://www.npmjs.com/package/angular2-fullcalendar

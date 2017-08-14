@@ -62,6 +62,287 @@ https://www.epictrim.com/ideas/install-composer-on-centos/
 # php artisan make:migration create_seasons_table
 # php artisan make:migration create_standing_table
 # php artisan make:migration create_schedule_table
+# php artisan make:migration create_players_table
+# php artisan make:migration create_news_table
+# php artisan make:migration create_contacts_table
+
+modificar create_seasons_table como sigue:
+				class CreateSeasonsTable extends Migration
+				{
+					/**
+					* Run the migrations.
+					*
+					* @return void
+					*/
+				public function up()
+					{
+						Schema::create('Seasons', function (Blueprint $table) {
+							$table->increments('Id');
+							$table->string('SeasonName');
+							$table->boolean('Active')->default(false);;
+							$table->boolean('IsHidden')->default(false);;
+							$table->date('SeasonStart');
+							$table->date('SeasonEnd');
+							//$table->timestamps();
+						});
+					}
+
+					/**
+					* Reverse the migrations.
+					*
+					* @return void
+					*/
+					public function down()
+					{
+						Schema::drop('Seasons');
+					}
+				}
+
+modificar create_venues_table como sigue:
+				class CreateVenuesTable extends Migration
+				{
+					/**
+					* Run the migrations.
+					*
+					* @return void
+					*/
+					public function up()
+					{
+						Schema::create('Venues', function (Blueprint $table) {
+							$table->increments('Id');
+							$table->string('VenueName');
+							$table->boolean('IsHidden')->default(false);;
+							//$table->timestamps();
+						});
+					}
+
+					/**
+					* Reverse the migrations.
+					*
+					* @return void
+					*/
+					public function down()
+					{
+						Schema::drop('Venues');
+					}
+				}
+modificar create_divisions_table como sigue:
+			class CreateDivisionsTable extends Migration
+			{
+				/**
+				* Run the migrations.
+				*
+				* @return void
+				*/
+				public function up()
+				{
+					Schema::create('Divisions', function (Blueprint $table) {
+						$table->increments('Id');
+						$table->string('DivisionName');
+						$table->boolean('IsHidden')->default(false);;
+						//$table->timestamps();
+					});
+				}
+
+				/**
+				* Reverse the migrations.
+				*
+				* @return void
+				*/
+				public function down()
+				{
+					Schema::drop('Divisions');
+				}
+			}
+
+modificar create_teams_table como sigue:
+			class CreateTeamsTable extends Migration
+			{
+				/**
+				* Run the migrations.
+				*
+				* @return void
+				*/
+				public function up()
+				{
+					Schema::create('Teams', function (Blueprint $table) {
+						$table->increments('Id');
+						$table->string('TeamName');
+						$table->boolean('IsHidden')->default(false);
+						$table->integer('DivisionId')->unsigned();
+						$table->foreign('DivisionId')->references('Id')->on('Divisions');
+						$table->integer('SeasonId')->unsigned();
+						$table->foreign('SeasonId')->references('Id')->on('Seasons');
+						//$table->timestamps();
+					});
+				}
+
+				/**
+				* Reverse the migrations.
+				*
+				* @return void
+				*/
+				public function down()
+				{
+					Schema::drop('Teams');
+				}
+			}
+
+modificar create_schedule_table como sigue:
+			class CreateSchedulesTable extends Migration
+			{
+				/**
+				* Run the migrations.
+				*
+				* @return void
+				*/
+				public function up()
+				{
+					Schema::create('Schedules', function (Blueprint $table) {
+						$table->increments('Id');
+					
+						$table->integer('SeasonId')->unsigned();
+						$table->foreign('SeasonId')->references('Id')->on('Seasons');
+
+						$table->integer('DivisionId')->unsigned();
+						$table->foreign('DivisionId')->references('Id')->on('Divisions');
+
+						$table->integer('VenueId')->unsigned();
+						$table->foreign('VenueId')->references('Id')->on('Venues');
+
+						$table->string('Status');
+						$table->dateTime('DateTime');
+
+						$table->integer('HomeTeamId')->unsigned();
+						$table->foreign('HomeTeamId')->references('Id')->on('Teams');
+
+						$table->integer('GoalsHomeTeam')->nullable();
+
+						$table->integer('AwayTeamId')->unsigned();
+						$table->foreign('AwayTeamId')->references('Id')->on('Teams');
+
+						$table->integer('GoalsAwayTeam')->nullable();
+
+						$table->boolean('IsHidden')->default(false);;
+
+						//$table->timestamps();
+					});
+				}
+
+				/**
+				* Reverse the migrations.
+				*
+				* @return void
+				*/
+				public function down()
+				{
+					Schema::drop('Schedules');
+				}
+			}
+modificar create_players_table como sigue:
+			class CreatePlayersTable extends Migration
+			{
+				/**
+				* Run the migrations.
+				*
+				* @return void
+				*/
+				public function up()
+				{
+					Schema::create('Players', function (Blueprint $table) {
+						$table->increments('Id');
+						$table->string('FirstName');
+						$table->string('LastName');
+						$table->boolean('IsHidden')->default(false);
+						$table->integer('TeamId')->unsigned();
+						$table->foreign('TeamId')->references('Id')->on('Teams');
+					
+						//$table->timestamps();
+					});
+				}
+
+				/**
+				* Reverse the migrations.
+				*
+				* @return void
+				*/
+				public function down()
+				{
+					Schema::drop('Players');
+				}
+			}
+modificar create_news_table como sigue:
+			class CreateNewsTable extends Migration
+			{
+				/**
+				* Run the migrations.
+				*
+				* @return void
+				*/
+				public function up()
+				{
+				Schema::create('News', function (Blueprint $table) {
+						$table->increments('Id');
+						$table->string('title');
+						$table->longText('description');
+						
+						$table->boolean('IsHidden')->default(false);
+						$table->dateTime('created');
+						$table->string('modifiedBy');
+						$table->string('modifiedByfullName');
+						$table->dateTime('modified');
+						//$table->timestamps();
+					});
+				}
+
+				/**
+				* Reverse the migrations.
+				*
+				* @return void
+				*/
+				public function down()
+				{
+					Schema::drop('News');
+				}
+			}
+modificar create_contacts_table como sigue:
+			class CreateContactsTable extends Migration
+			{
+				/**
+				* Run the migrations.
+				*
+				* @return void
+				*/
+				public function up()
+				{
+					Schema::create('Contacts', function (Blueprint $table) {
+						$table->increments('Id');
+						$table->string('yourName');
+						$table->string('email');
+						$table->string('message',1500);
+						
+						$table->boolean('IsHidden')->default(false);
+						$table->integer('requestSubject');
+						$table->dateTime('created');
+						$table->string('modifiedBy')->nullable();;
+						$table->string('modifiedByfullName')->nullable();;
+						$table->dateTime('modified');
+						//$table->timestamps();
+					});
+				}
+
+				/**
+				* Reverse the migrations.
+				*
+				* @return void
+				*/
+				public function down()
+				{
+					Schema::drop('Contacts');
+				}
+			}
+
+
 
 **** define parameters for table una ves creado todos los script para las tablas ejecutar
 #php artisan migrate
@@ -69,42 +350,279 @@ https://www.epictrim.com/ideas/install-composer-on-centos/
 **** crear seeder 
 # php artisan make:seeder DivisionTableSeeder
 
-public function run()
+use NVSLOnline\Division;
+class DivisionTableSeeder extends Seeder
+{
+	public function run()
+		{
+			$divisions = [
+				[
+					'DivisionName' => 'First',
+					'IsHidden' => false
+				],
+				[
+					'DivisionName' => 'Second',
+					'IsHidden' => false
+				]
+			];
+
+			foreach ($divisions as $division) {
+				Division::create($division);
+			}
+		}
+}
+
+# php artisan make:seeder PlayerTableSeeder
+
+use NVSLOnline\Player;
+class PlayerTableSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+   public function run()
     {
-        $divisions = [
+       $players = [
             [
-                'DivisionName' => 'First',
+                'FirstName' => 'Phil',
+                'LastName' => 'Heins',
+                'IsHidden' => false,
+                'TeamId' => 1
+            ],
+            [
+                'FirstName' => 'Nikola',
+                'LastName' => 'Pearson',
+                'IsHidden' => false,
+                'TeamId' => 2
+            ],
+            [
+                'FirstName' => 'John',
+                'LastName' =>  'Pearson',
+                'IsHidden' => false,
+                'TeamId' => 3
+            ]
+        ];
+
+        foreach ($players as $player) {
+            Player::create($player);
+        }
+    }
+}
+
+# php artisan make:seeder SeasonTableSeeder
+
+use NVSLOnline\Season;
+use Carbon\Carbon;
+class SeasonTableSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        
+         $seasons = [
+            [
+                'SeasonName' => 'Spring 2016',
+                'Active' => false,
+                'IsHidden' => false,
+                'SeasonStart' => Carbon::createFromDate(2016,01,02)->toDateTimeString(),
+                'SeasonEnd' => Carbon::createFromDate(2016,02,31)->toDateTimeString()
+            ],
+            [
+                'SeasonName' => 'Summer 2016',
+                'Active' => false,
+                'IsHidden' => false,
+                'SeasonStart' => Carbon::createFromDate(2016,03,01)->toDateTimeString(),
+                'SeasonEnd' => Carbon::createFromDate(2016,04,31)->toDateTimeString()
+            ],
+            [
+                'SeasonName' => 'Fall 2017',
+                'Active' => true,
+                'IsHidden' => false,
+                'SeasonStart' => Carbon::createFromDate(2016,05,01)->toDateTimeString(),
+                'SeasonEnd' => Carbon::createFromDate(2016,06,31)->toDateTimeString()
+            ]
+        ];
+
+        foreach ($seasons as $season) {
+            Season::create($season);
+        }
+    }
+}
+
+# php artisan make:seeder TeamTableSeeder
+
+use NVSLOnline\Team;
+class TeamTableSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+         $teams = [
+            [
+                'TeamName' => 'Benchwarmers',
+                'IsHidden' => false,
+                'DivisionId' => 1,
+                'SeasonId'=> 1
+            ],
+            [
+                'TeamName' => 'FC Turan',
+                'IsHidden' => false,
+                'DivisionId' => 1,
+                'SeasonId'=> 1
+            ],
+            [
+                'TeamName' => 'Pharaoh FC',
+                'IsHidden' => false,
+                'DivisionId' => 1,
+                'SeasonId'=> 1
+            ],
+            [
+                'TeamName' => 'TFC Gunners',
+                'IsHidden' => false,
+                'DivisionId' => 1,
+                'SeasonId'=> 2
+            ],
+            [
+                'TeamName' => 'Arlington Arsenal',
+                'IsHidden' => false,
+                'DivisionId' => 2,
+                'SeasonId'=> 2
+            ],
+            [
+                'TeamName' => 'Benchwarmers 30',
+                'IsHidden' => false,
+                'DivisionId' => 2,
+                'SeasonId'=> 1
+            ],
+            [
+                'TeamName' => 'Braddock FC',
+                'IsHidden' => false,
+                'DivisionId' => 2,
+                'SeasonId'=> 3
+            ],
+            [
+                'TeamName' => 'Murphys',
+                'IsHidden' => false,
+                'DivisionId' => 2,
+                'SeasonId'=> 3
+            ],
+            [
+                'TeamName' => 'Real Ballers FC',
+                'IsHidden' => false,
+                'DivisionId' => 2,
+                'SeasonId'=> 3
+            ],
+            [
+                'TeamName' => 'Smoking Aces',
+                'IsHidden' => false,
+                'DivisionId' => 2,
+                'SeasonId'=> 1
+            ]
+        ];
+
+        foreach ($teams as $team) {
+            Team::create($team);
+        }
+    }
+}
+
+# php artisan make:seeder VenueTableSeeder
+
+use NVSLOnline\Venue;
+class VenueTableSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+     public function run()
+    {
+       $venues = [
+            [
+                'VenueName' => 'Jackson MS',
                 'IsHidden' => false
             ],
             [
-                'DivisionName' => 'Second',
+                'VenueName' => 'Franconia #4',
+                'IsHidden' => false
+            ],
+            [
+                'VenueName' => 'Robinson Auxiliary',
+                'IsHidden' => false
+            ],
+            [
+                'VenueName' => 'Robinson Stadium',
+                'IsHidden' => false
+            ],
+            [
+                'VenueName' => 'Annadale HS',
+                'IsHidden' => false
+            ],
+            [
+                'VenueName' => 'Arrowhead Park #3',
+                'IsHidden' => false
+            ],
+            [
+                'VenueName' => 'Wakefield #5',
                 'IsHidden' => false
             ]
         ];
 
-        foreach ($divisions as $division) {
-            Division::create($division);
+        foreach ($venues as $venue) {
+            Venue::create($venue);
         }
     }
+}
 
-**** modificar DatabaseSeeder para especificar la carga inicial de data
+	**** modificar DatabaseSeeder para especificar la carga inicial de data
 
-public function run()
-    {
-        // $this->call(UsersTableSeeder::class);
-        $this->call(DivisionTableSeeder::class);
-    }
+		class DatabaseSeeder extends Seeder
+		{
+			/**
+			* Run the database seeds.
+			*
+			* @return void
+			*/
+			public function run()
+			{
+				//$this->call(UserTableSeeder::class);
 
-**** correr seeder
+				$this->call(SeasonTableSeeder::class);
+				$this->call(VenueTableSeeder::class);
+				$this->call(DivisionTableSeeder::class);
+				$this->call(TeamTableSeeder::class);
+				$this->call(PlayerTableSeeder::class);
+				$this->call(ScheduleTableSeeder::class);
+			}
+		}
+
+
+
+
+	**** correr seeder
 
 # php artisan db:seed
 
 
 **** con este comando se ejecutaran los script
-# php artisan make:models Team
+# php artisan make:model Team
 
 class Team extends Model
 {
+    //con esta line evitamos en cambio a camel case
+	public static $snakeAttributes = false;
+	
 	protected $table = 'Teams';
 
 	protected $primaryKey = 'Id';
@@ -114,7 +632,8 @@ class Team extends Model
 	protected $fillable =[
 		'TeamName',
 		'IsHidden',
-		'DivisionId'
+		'DivisionId',
+		'SeasonId'
 	];
 	
  	//public $Division = Division;
@@ -122,42 +641,242 @@ class Team extends Model
 	 public function Division(){
 		 return $this->hasOne(Division::class,'Id','DivisionId');
 	 }
-	
+
+	 public function Season(){
+		 return $this->hasOne(Season::class,'Id','SeasonId');
+	 }
 	
 }
-# php artisan make:models Division
+
+# php artisan make:model Division
 class Division extends Model
 {
+    //con esta line evitamos en cambio a camel case
+	public static $snakeAttributes = false;
+
 	protected $table = 'Divisions';
 
 	protected $primaryKey = 'Id';
 
 	public $timestamps = false;
-
+	
 	protected $fillable =[
 		'DivisionName',
 		'IsHidden'
 	];
 }
 
+# php artisan make:model News
+class News extends Model
+{
+    //con esta line evitamos en cambio a camel case
+	public static $snakeAttributes = false;
+
+	protected $table = 'News';
+
+	protected $primaryKey = 'Id';
+
+	public $timestamps = false;
+	
+	protected $fillable =[
+		'title',
+		'description',
+        'IsHidden',
+        'created',
+        'modifiedBy',
+        'modifiedByfullName',
+        'modified'
+	];
+}
+
+# php artisan make:model Contact
+class Contact extends Model
+{
+    //con esta line evitamos en cambio a camel case
+	public static $snakeAttributes = false;
+
+	protected $table = 'Contacts';
+
+	protected $primaryKey = 'Id';
+
+	public $timestamps = false;
+	
+	protected $fillable =[
+		'yourName',
+		'email',
+        'message',
+        'requestSubject',
+        'IsHidden',
+        'created',
+        'modifiedBy',
+        'modifiedByfullName',
+        'modified'
+	];
+}
+
+# php artisan make:model Player
+class Player extends Model
+{
+    //con esta line evitamos en cambio a camel case
+	public static $snakeAttributes = false;
+	
+    protected $table = 'Players';
+
+	protected $primaryKey = 'Id';
+
+	public $timestamps = false;
+
+	protected $fillable =[
+		'FirstName',
+        'LastName',
+		'IsHidden',
+        'TeamId'
+	];
+
+	public function Team(){
+		 return $this->hasOne(Team::class,'Id','TeamId');
+	 }
+}
+
+# php artisan make:model Schedule
+class Schedule extends Model
+{
+    //con esta line evitamos en cambio a camel case
+	public static $snakeAttributes = false;
+
+    protected $table = 'Schedules';
+	
+	protected $primaryKey = 'Id';
+	
+	public $timestamps = false;
+
+	protected $fillable =[
+		'SeasonId',
+		'DivisionId',
+		'VenueId',
+		'Status',
+		'DateTime',
+		'HomeTeamId',
+		'GoalsHomeTeam',
+		'AwayTeamId',
+		'GoalsAwayTeam',
+        'IsHidden'
+	];
+
+	public function Season(){
+		 return $this->hasOne(Season::class,'Id','SeasonId');
+	 }
+     public function Division(){
+		 return $this->hasOne(Division::class,'Id','DivisionId');
+	 }
+     public function Venue(){
+		 return $this->hasOne(Venue::class,'Id','VenueId');
+	 }
+
+	 public function HomeTeam(){
+		 return $this->hasOne(Team::class,'Id','HomeTeamId');
+	 }
+
+     public function AwayTeam(){
+		 return $this->hasOne(Team::class,'Id','AwayTeamId');
+	 }
+}
+
+
+# php artisan make:model Season
+class Season extends Model
+{
+    //con esta line evitamos en cambio a camel case
+	public static $snakeAttributes = false;
+	
+    protected $table = 'Seasons';
+
+	protected $primaryKey = 'Id';
+
+	public $timestamps = false;
+
+	protected $fillable =[
+		'SeasonName',
+		'Active',
+		'IsHidden',
+		'SeasonStart',
+		'SeasonEnd'
+	];
+}
+
+# php artisan make:model Standing
+class Standing extends Model
+{
+    //con esta line evitamos en cambio a camel case
+	public static $snakeAttributes = false;
+	
+    protected $table = 'Standings';
+
+	protected $primaryKey = 'Id';
+	
+	public $timestamps = false;
+
+	protected $fillable =[
+		'Wins',
+		'Losses',
+		'Ties',
+		'Points',
+		'GoalsFor',
+		'GoalsAgainst',
+		'IsHidden',
+		'DivisionId',
+		'TeamId'
+	];
+
+	public function Division(){
+		 return $this->hasOne(Division::class,'Id','DivisionId');
+	 }
+
+	 public function Team(){
+		 return $this->hasOne(Team::class,'Id','TeamId');
+	 }
+}
+
+# php artisan make:model Venue
+class Venue extends Model
+{
+    protected $table = 'Venues';
+
+	protected $primaryKey = 'Id';
+
+	public $timestamps = false;
+
+	protected $fillable =[
+		'VenueName',
+		'IsHidden'
+	];
+}
+
+
 # php artisan make:controller DivisionController
 
-class DivisionController extends Controller{
+use Illuminate\Http\Response;
+//use NVSLOnline\Http\Requests;
+use NVSLOnline\Division;
+//use Illuminate\Support\Facades\Redirect;
+use DB;
+use Config;
 
+class DivisionController extends Controller
+{
+	function __construct(){
+		$this->exists = Config::get('parameters.exists.exists');
+		$this->status = Config::get('parameters.exists.status');
+	}
 	
-	public function index(){
+	
+    public function index(){
 				$divisions = DB::table('Divisions')
-				//->where('DivisionName','LIKE', '%'.query.'%')
 				->where('IsHidden','=','false')
+				->orderBy('Id','ASC')
 				->get();
 
-				return response()->json([
-					"msg" => "Success",
-					"divisions" => $divisions
-					],200
-				);
-
-				
+		return response()->json($divisions);		
 	}
 	
 	public function show($id){
@@ -170,30 +889,43 @@ class DivisionController extends Controller{
 	}
 
 	public function store(Request $request){
+		
 		if($request){
+			$division = Division::where([
+				['DivisionName','=',$request->DivisionName],
+				['IsHidden','=',false]
+			])->first();
+
+			if ($division) {
+				return response()->json($this->exists,$this->status);
+			}
+			
 			$objDivision = new Division; 
 			$objDivision -> DivisionName = $request->DivisionName;
 			$objDivision -> IsHidden = 0;
 			//$objDivision -> IsHidden = $request->IsHidden;
 			$objDivision -> save();
-			return response()->json([
-						"msg" => "Success",
-						"id" => $objDivision->Id
-						],200
-					);
+			return response()->json($objDivision,200);
 		}
 	}
 
 	public function update(Request $request,$id){
-		//$objDivision = Division::find($request->Id);
 		$objDivision = Division::find($id);
+
+		$division = Division::where([
+				['DivisionName','=',$request->DivisionName],
+				['IsHidden','=',false]
+			])->first();
+		
+		if ($division) {
+			if ($request->DivisionName != $objDivision->DivisionName) {
+				return response()->json($this->exists,$this->status);
+			}
+		}
+		
 		$objDivision -> DivisionName = $request->DivisionName;
 		$objDivision -> save();
-		return response()->json([
-					"msg" => "Success",
-					"id" => $objDivision->Id
-					],200
-				);
+		return response()->json($objDivision,200);
 	}
 	public function updateDelete($id){
 		$objDivision = Division::find($id);
@@ -209,79 +941,628 @@ class DivisionController extends Controller{
 		$objDivision = Division::find($id)->delete();
 		return 'Record  successfully deleted';
 	}
-
-    //
 }
+
+# php artisan make:controller PlayerController
+
+use NVSLOnline\Player;
+use DB;
+
+class PlayerController extends Controller
+{
+    public function index(){
+				$players = Player::with('Team')
+				//$players = DB::table('Players')
+				->where('IsHidden','=','false')
+				->orderBy('Id','ASC')
+				->get();
+				return response()->json($players);
+    }
+
+	public function store(Request $request){
+		
+		if($request){
+			$objPlayer = new Player; 
+			$objPlayer -> FirstName = $request->FirstName;
+			$objPlayer -> LastName = $request->LastName;
+			$objPlayer -> TeamId = $request->TeamId;
+			$objPlayer -> IsHidden = 0;
+			//$objDivision -> IsHidden = $request->IsHidden;
+			$objPlayer -> save();
+			return response()->json($objPlayer);
+		}
+	}
+
+	public function update(Request $request,$id){
+		$objPlayer = Player::find($id);
+		$objPlayer -> FirstName = $request->FirstName;
+		$objPlayer -> LastName = $request->LastName;
+		$objPlayer -> TeamId = $request->TeamId;
+		$objPlayer -> save();
+		return response()->json($objPlayer);
+	}
+
+	public function updateDelete($id){
+		$objPlayer = Player::find($id);
+		$objPlayer -> IsHidden = 1;
+		$objPlayer -> save();
+		return response()->json($objPlayer);
+	}
+
+	public function getPlayersByTemId($id){
+				$players = DB::table('Players')
+				->where('IsHidden','=','false')
+				->where('TeamId','=',$id)
+				->orderBy('Id','ASC')
+				->get();
+				return response()->json($players);
+    }
+}
+
+
+# php artisan make:controller ScheduleController
+
+use NVSLOnline\Schedule;
+use DB;
+use Carbon\Carbon;
+
+class ScheduleController extends Controller
+{
+    public function index(){
+			
+		$schedules = Schedule::with('Season','Division','Venue','HomeTeam','AwayTeam')
+		->where('IsHidden','=','false')
+		//->select('*')
+		->get();
+
+		return response()->json($schedules);
+    }
+
+	public function store(Request $request){
+		if($request){
+
+		 $DateTimeGame = Carbon::parse($request->DateTime);
+			$objSchedule = new Schedule; 
+			$objSchedule -> Status = $request->Status;
+			$objSchedule -> DateTime = $DateTimeGame;
+			//$objSchedule -> Score = $request->Score;
+			
+			$objSchedule -> IsHidden = 0;
+			$objSchedule -> DivisionId = $request->DivisionId;
+			$objSchedule -> HomeTeamId = $request->HomeTeamId;
+			$objSchedule -> GoalsHomeTeam = $request->GoalsHomeTeam;
+			$objSchedule -> AwayTeamId = $request->AwayTeamId;
+			$objSchedule -> GoalsAwayTeam = $request->GoalsAwayTeam;
+			$objSchedule -> SeasonId = $request->SeasonId;
+			$objSchedule -> VenueId = $request->VenueId;
+			
+			//$objDivision -> IsHidden = $request->IsHidden;
+			$objSchedule -> save();
+			return response()->json($objSchedule);
+			
+		}
+	}
+
+	public function update(Request $request,$id){
+		//$objDivision = Division::find($request->Id);
+		$objSchedule = Schedule::find($id);
+
+		$objSchedule -> Status = $request->Status;
+		$objSchedule -> DateTime = $request->DateTime;
+		$objSchedule -> GoalsHomeTeam = $request->GoalsHomeTeam;
+		$objSchedule -> GoalsAwayTeam = $request->GoalsAwayTeam;
+		$objSchedule -> IsHidden = 0;
+
+		$objSchedule -> DivisionId = $request->DivisionId;
+		$objSchedule -> HomeTeamId = $request->HomeTeamId;
+		$objSchedule -> AwayTeamId = $request->AwayTeamId;
+		$objSchedule -> SeasonId = $request->SeasonId;
+		$objSchedule -> VenueId = $request->VenueId;
+
+		$objSchedule -> save();
+		
+		return response()->json($objSchedule);
+	}
+
+
+	public function editScheduleScore(Request $request,$id){
+		//$objDivision = Division::find($request->Id);
+		$objSchedule = Schedule::find($id);
+		$objSchedule -> GoalsHomeTeam = $request->GoalsHomeTeam;
+		$objSchedule -> GoalsAwayTeam = $request->GoalsAwayTeam;
+		$objSchedule -> Status = "Played";
+		$objSchedule -> save();
+		
+		return response()->json($objSchedule);
+	}
+
+	public function updateDelete($id){
+		$objSchedule = Schedule::find($id);
+		$objSchedule -> IsHidden = 1;
+		$objSchedule -> save();
+		return response()->json($objSchedule);
+	}
+}
+
+
+# php artisan make:controller SeasonController
+
+use NVSLOnline\Season;
+use DB;
+use Carbon\Carbon;
+use Config;
+
+class SeasonController extends Controller
+{
+	function __construct(){
+		$this->exists = Config::get('parameters.exists.exists');
+		$this->status = Config::get('parameters.exists.status');
+	}
+
+    public function index(){
+     	$seasons = DB::table('Seasons')
+				->where('IsHidden','=','false')
+				->orderBy('Id','ASC')
+				->get();
+		
+				return response()->json($seasons);
+	}
+
+	public function inactiveSeason(){
+     	$seasons = DB::table('Seasons')
+				->where('IsHidden','=','false')
+				->where('Active','=','false')
+				->get();
+		
+				return response()->json($seasons);
+	}
+
+	public function show($id){
+		$season = \NVSLOnline\Season::find($id);
+		return response()->json($season);
+	}
+	
+	public function store(Request $request){
+		$season = Season::where([
+			['SeasonName','=',$request->SeasonName],
+			['IsHidden','=',false]
+		])->first();
+
+			if ($season) {
+				return response()->json($this->exists,$this->status);
+			}
+
+		$objSeason = New Season(); 
+		$objSeason -> SeasonName = $request->SeasonName;
+		$objSeason -> Active = $request->Active;
+		$objSeason -> IsHidden = 0;
+		$objSeason -> SeasonStart = $request->SeasonStart;
+		$objSeason -> SeasonEnd = $request->SeasonEnd;
+		$objSeason -> save();
+		return response()->json([
+					"msg" => "Success",
+					"id" => $objSeason->Id
+					],200
+				);
+	}
+	
+	public function update(Request $request,$id){
+		//$objDivision = Division::find($request->Id);
+		$objSeason = Season::find($id);
+
+		$season = Season::where([
+			['SeasonName','=',$request->SeasonName],
+			['IsHidden','=',false]
+		])->first();
+		
+		if ($season) {
+			if ($request->SeasonName != $objSeason->SeasonName) {
+				return response()->json($this->exists,$this->status);
+			}
+		}
+
+		$objSeason -> SeasonName = $request->SeasonName;
+		$objSeason -> SeasonStart = $request->SeasonStart;
+		$objSeason -> SeasonEnd = $request->SeasonEnd;
+		$objSeason -> save();
+		
+		return response()->json($objSeason,200);
+	}
+	public function updateDelete($id){
+		$objSeason = Season::find($id);
+		$objSeason -> IsHidden = 1;
+		$objSeason -> save();
+		return response()->json([
+					"msg" => "Success",
+					"id" => $objSeason->Id
+					],200
+				);
+	}
+
+	public function editSeasonActive(Request $request,$id){
+		$objSeason = Season::find($id);
+		$objSeason -> Active = $request->Active;
+		$objSeason -> save();
+		return response()->json([
+					"msg" => "Success",
+					"id" => $objSeason->Id
+					],200
+				);
+	}
+}
+
+
 # php artisan make:controller TeamController
+
+use NVSLOnline\Team;
+use DB;
+use Config;
 
 class TeamController extends Controller
 {
+	function __construct(){
+		$this->exists = Config::get('parameters.exists.exists');
+		$this->status = Config::get('parameters.exists.status');
+	}
+
     public function index(){
-			/*$teams = DB::table('Teams')
-				//->where('DivisionName','LIKE', '%'.query.'%')
-				->where('IsHidden','=','false')
-				->get();*/
-		//$teams = Team::get();
-		$teams = Team::with('Division')
+		$teams = Team::with('Division','Season')
 		->where('IsHidden','=','false')
+		->orderBy('Id','ASC')
 		->get();
 
-				return response()->json([
-					"msg" => "Success",
-					"teams" => $teams->toArray()
-					],200
-				);
+		return response()->json($teams);
 	}
 	
 	public function show($id){
 		$team = Team::find($id);
-		return response()->json([
-					"msg" => "Success",
-					"team" => $team
-					],200
-				);
+		return response()->json($team,200);
 	}
 	
 	public function store(Request $request){
 		if($request){
+			$team = Team::where([
+				['TeamName','=',$request->TeamName],
+				['DivisionId','=',$request->DivisionId],
+				['SeasonId','=',$request->SeasonId],
+				['IsHidden','=',false]
+			])->first();
+
+			if ($team) {
+				return response()->json($this->exists,$this->status);
+			}
+			
 			$objTeam = new Team; 
 			$objTeam -> TeamName = $request->TeamName;
 			$objTeam -> IsHidden = 0;
 			$objTeam -> DivisionId = $request->DivisionId;
+			$objTeam -> SeasonId = $request->SeasonId;
 			$objTeam -> save();
-			return response()->json([
-						"msg" => "Success",
-						"id" => $objTeam->Id
-						],200
-					);
+			return response()->json($objTeam);
+			
 		}
 	}
 
 	public function update(Request $request,$id){
 		$objTeam = Team::find($id);
+
+		$team = Team::where([
+				['TeamName','=',$request->TeamName],
+				['DivisionId','=',$request->DivisionId],
+				['SeasonId','=',$request->SeasonId],
+				['IsHidden','=',false]
+			])->first();
+		
+		if ($team) {
+			if ($request->TeamName != $objTeam->TeamName) {
+				return response()->json($this->exists,$this->status);
+			}
+		}
+
 		$objTeam -> TeamName = $request->TeamName;
 		//$objTeam -> IsHidden = 0;
 		$objTeam -> DivisionId = $request->DivisionId;
+		$objTeam -> SeasonId = $request->SeasonId;
 		$objTeam -> save();
-		return response()->json([
-					"msg" => "Success",
-					"id" => $objTeam->Id
-					],200
-				);
+		return response()->json($objTeam);
+		
 	}
 	public function updateDelete($id){
 		$objTeam = Team::find($id);
 		$objTeam -> IsHidden = 1;
 		$objTeam -> save();
-		return response()->json([
-					"msg" => "Success",
-					"id" => $objTeam->Id
-					],200
-				);
+		return response()->json($objTeam);
 	}
 	public function destroy($id){
 		$objTeam = Team::find($id)->delete();
 		return 'Record  successfully deleted';
+	}
+}
+
+# php artisan make:controller StandingController
+
+use NVSLOnline\Schedule;
+use NVSLOnline\Team;
+use DB;
+
+class StandingController extends Controller
+{
+    public function index(){
+		$lstStanding = array();
+
+        $teams = $this->getTeams();
+                
+        foreach ($teams as $team) {
+            
+            $teamsEnJuego = DB::table('Schedules')
+            ->where('Schedules.HomeTeamId','=',$team->Id)
+            ->orWhere('Schedules.AwayTeamId','=',$team->Id)
+            ->get();
+            $standing = array();
+
+            $standing["SeasonId"] = $team->SeasonId;
+            $standing["Season"] = $team->Season;
+            $standing["DivisionId"] = $team->DivisionId;
+            $standing["Division"] = $team->Division;
+
+            $standing["TeamName"] = $team->TeamName;
+            $standing["Wins"] = 0;
+            $standing["Losses"] = 0;
+            $standing["Ties"] = 0;
+            $standing["Points"] = 0;
+            $standing["GoalsFor"] = 0;
+            $standing["GoalsAgainst"] = 0;
+
+            foreach ($teamsEnJuego as $teamEnJuego) {
+                if ($teamEnJuego->IsHidden == false) {
+                 
+                if ($team->Id == $teamEnJuego->HomeTeamId) {
+                        $standing["GoalsFor"] += $teamEnJuego->GoalsHomeTeam;
+                        $standing["GoalsAgainst"] += $teamEnJuego->GoalsAwayTeam;
+                        if ($teamEnJuego->GoalsHomeTeam > $teamEnJuego->GoalsAwayTeam) {
+                            $standing["Wins"] += 1;
+                            $standing["Points"] += 3;
+
+                        }
+                        if ($teamEnJuego->GoalsHomeTeam < $teamEnJuego->GoalsAwayTeam) {
+                            $standing["Losses"] += 1;
+                        }
+                        if ($teamEnJuego->GoalsHomeTeam == $teamEnJuego->GoalsAwayTeam 
+                        && $teamEnJuego->GoalsHomeTeam !== null) {
+                            $standing["Ties"] += 1;
+                            $standing["Points"] += 1;
+                        }
+
+                    }
+                    else {
+                        $standing["GoalsFor"] += $teamEnJuego->GoalsAwayTeam;
+                        $standing["GoalsAgainst"] += $teamEnJuego->GoalsHomeTeam;
+                        if ($teamEnJuego->GoalsAwayTeam > $teamEnJuego->GoalsHomeTeam) {
+                            $standing["Wins"] += 1;
+                            $standing["Points"] += 3;
+
+                        }
+                        if ($teamEnJuego->GoalsAwayTeam < $teamEnJuego->GoalsHomeTeam) {
+                            $standing["Losses"] += 1;
+                        }
+                        if ($teamEnJuego->GoalsAwayTeam === $teamEnJuego->GoalsHomeTeam 
+                        && $teamEnJuego->GoalsHomeTeam !== null) {
+                            $standing["Ties"] += 1;
+                            $standing["Points"] += 1;
+                        }
+                    }
+            
+            
+                    }
+               
+                }
+
+            $standing["Differential"] = $standing["GoalsFor"] - $standing["GoalsAgainst"];
+            array_push($lstStanding,$standing);
+        }
+        return $lstStanding;
+    }
+
+    
+    public function getTeams(){
+		//$teams = DB::table('Teams')
+        $teams = Team::with('Division','Season')
+		->where([['IsHidden','=','false']])
+        
+		->get();
+
+		return $teams;
+	}
+}
+
+# php artisan make:controller VenueController
+
+use NVSLOnline\Venue;
+use DB;
+use Config;
+
+class VenueController extends Controller
+{
+	function __construct(){
+		$this->exists = Config::get('parameters.exists.exists');
+		$this->status = Config::get('parameters.exists.status');
+	}
+
+    public function index(){
+     	$venues = DB::table('Venues')
+				->where('IsHidden','=','false')
+				->orderBy('Id','ASC')
+				->get();
+		
+				return response()->json($venues);
+	}
+
+	public function store(Request $request){
+		
+		if($request){
+			$venue = Venue::where([
+				['VenueName','=',$request->VenueName],
+				['IsHidden','=',false]
+			])->first();
+
+			if ($venue) {
+				return response()->json($this->exists,$this->status);
+			}
+
+			$objVenue = new Venue; 
+			$objVenue -> VenueName = $request->VenueName;
+			$objVenue -> IsHidden = 0;
+			//$objDivision -> IsHidden = $request->IsHidden;
+			$objVenue -> save();
+			return response()->json($objVenue);
+		}
+	}
+
+	public function update(Request $request,$id){
+		$objVenue = Venue::find($id);
+
+		$venue = Venue::where([
+				['VenueName','=',$request->VenueName],
+				['IsHidden','=',false]
+			])->first();
+		
+		if ($venue) {
+			if ($request->VenueName != $objVenue->VenueName) {
+				return response()->json($this->exists,$this->status);
+			}
+		}
+
+		$objVenue -> VenueName = $request->VenueName;
+		$objVenue -> save();
+		return response()->json($objVenue);
+	}
+	public function updateDelete($id){
+		$objVenue = Venue::find($id);
+		$objVenue -> IsHidden = 1;
+		$objVenue -> save();
+		return response()->json($objVenue);
+	}
+}
+
+# php artisan make:controller NewsController
+
+use NVSLOnline\News;
+use DB;
+
+class NewsController extends Controller
+{
+    public function index(){
+				$news = DB::table('News')
+				->where('IsHidden','=','false')
+                ->orderBy('modified','DESC')
+				->get();
+
+		return response()->json($news);		
+	}
+
+    public function store(Request $request){
+		
+		if($request){
+			$objNews = new News; 
+			$objNews -> title = $request->title;
+            $objNews -> description = $request->description;
+            
+			$objNews -> IsHidden = 0;
+            $objNews -> created = DB::raw('NOW()');
+            $objNews -> modifiedBy = $request->modifiedBy;
+            $objNews -> modified = DB::raw('NOW()');
+            $objNews -> modifiedByfullName = $request->modifiedByfullName;
+			//$objDivision -> IsHidden = $request->IsHidden;
+			$objNews -> save();
+
+            return response()->json($objNews);
+		}
+	}
+
+    public function update(Request $request,$id){
+		//$objDivision = Division::find($request->Id);
+		$objNews = News::find($id);
+		$objNews -> title = $request->title;
+        $objNews -> description = $request->description;
+            
+		$objNews -> IsHidden = 0;
+        $objNews -> modifiedBy = $request->modifiedBy;
+        $objNews -> modified = DB::raw('NOW()');
+        $objNews -> modifiedByfullName = $request->modifiedByfullName;
+		$objNews -> save();
+        return response()->json($objNews);
+		
+	}
+	public function updateDelete($id){
+		$objNews = News::find($id);
+		$objNews -> IsHidden = 1;
+		$objNews -> save();
+        return response()->json($objNews);
+		
+	}
+
+}
+
+# php artisan make:controller ContactController
+
+use NVSLOnline\Contact;
+use DB;
+
+class ContactController extends Controller
+{
+    public function index(){
+				$contacts = DB::table('Contacts')
+				->where('IsHidden','=','false')
+                ->orderBy('Id','ASC')
+				->get();
+
+		return response()->json($contacts);		
+	}
+
+    public function store(Request $request){
+		
+		if($request){
+			$objContacts = new Contact; 
+			$objContacts -> yourName = $request->yourName;
+            $objContacts -> email = $request->email;
+            $objContacts -> message = $request->message;
+            
+			$objContacts -> IsHidden = 0;
+            $objContacts -> requestSubject = $request->requestSubject;
+            
+            $objContacts -> created = DB::raw('NOW()');
+            $objContacts -> modifiedBy = $request->modifiedBy;
+            $objContacts -> modified = DB::raw('NOW()');
+            $objContacts -> modifiedByfullName = $request->modifiedByfullName;
+			//$objDivision -> IsHidden = $request->IsHidden;
+			$objContacts -> save();
+
+            return response()->json($objContacts);
+		}
+	}
+
+    public function update(Request $request,$id){
+		//$objDivision = Division::find($request->Id);
+		$objContacts = Contact::find($id);
+		$objContacts -> yourName = $request->yourName;
+        $objContacts -> email = $request->email;
+        $objContacts -> message = $request->message;
+            
+		$objContacts -> IsHidden = 0;
+        $objContacts -> requestSubject = $request->requestSubject;
+        $objContacts -> modifiedBy = $request->modifiedBy;
+        $objContacts -> modified = DB::raw('NOW()');
+        $objContacts -> modifiedByfullName = $request->modifiedByfullName;
+		$objContacts -> save();
+        return response()->json($objContacts);
+		
+	}
+	public function updateDelete($id){
+		$objContacts = Contact::find($id);
+		$objContacts -> IsHidden = 1;
+		$objContacts -> save();
+        return response()->json($objContacts);
+		
 	}
 }
 
@@ -293,30 +1574,150 @@ para manejo de fechas
 
 *****cambiar rutas en NVSLOnline/routes/web.php
 
-Route::get("division", "DivisionController@index");
-Route::get("division/{id}", "DivisionController@show");
-Route::post("division", "DivisionController@store");
-Route::put("division/{id}", "DivisionController@update");
-Route::delete("division/{id}", "DivisionController@updateDelete");
-Route::delete("division/destroy/{id}", "DivisionController@destroy");
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Credentials: true');
+header('Access-Control-Allow-Methods: GET,POST,PUT,DELETE');
+header('Access-Control-Allow-Headers: content-type');
 
-Route::get("team", "TeamController@index");
-Route::get("team/{id}", "TeamController@show");
-Route::post("team", "TeamController@store");
-Route::put("team/{id}", "TeamController@update");
-Route::delete("team/{id}", "TeamController@updateDelete");
-Route::delete("team/destroy/{id}", "TeamController@destroy");
+Route::get('/', function () {
+    return view('welcome');
+});
 
-
-
+Route::group([
+    'middleware'=>'cors',
+    //'namespace'=>$this->namespace,
+    'prefix'=>'api',
+],function(){
 
 
+Route::get("divisions", "DivisionController@index");
+Route::get("divisions/{id}", "DivisionController@show");
+Route::post("divisions", "DivisionController@store");
+Route::put("divisions/{id}", "DivisionController@update");
+Route::delete("divisions/{id}", "DivisionController@updateDelete");
+Route::delete("divisions/destroy/{id}", "DivisionController@destroy");
+
+Route::get("teams", "TeamController@index");
+Route::get("teams/{id}", "TeamController@show");
+Route::post("teams", "TeamController@store");
+Route::put("teams/{id}", "TeamController@update");
+Route::delete("teams/{id}", "TeamController@updateDelete");
+Route::delete("teams/destroy/{id}", "TeamController@destroy");
+
+Route::get("seasons", "SeasonController@index");
+Route::get("seasons/inactive", "SeasonController@inactiveSeason");
+Route::get("seasons/{id}", "SeasonController@show");
+Route::post("seasons", "SeasonController@store");
+Route::put("seasons/{id}", "SeasonController@update");
+Route::put("seasons/seasonActive/{id}", "SeasonController@editSeasonActive");
+Route::delete("seasons/{id}", "SeasonController@updateDelete");
+//Route::delete("seasons/{id}", "SeasonController@destroy");
+
+Route::get("venues", "VenueController@index");
+Route::post("venues", "VenueController@store");
+Route::put("venues/{id}", "VenueController@update");
+Route::delete("venues/{id}", "VenueController@updateDelete");
+
+Route::get("players", "PlayerController@index");
+Route::get("playersByTeam/{id}", "PlayerController@getPlayersByTemId");
+Route::post("players", "PlayerController@store");
+Route::put("players/{id}", "PlayerController@update");
+Route::delete("players/{id}", "PlayerController@updateDelete");
+
+Route::get("schedules", "ScheduleController@index");
+Route::post("schedules", "ScheduleController@store");
+Route::put("schedules/{id}", "ScheduleController@update");
+//Route::put("schedules/scheduleScore/{id}", "ScheduleController@editScheduleScore");
+Route::delete("schedules/{id}", "ScheduleController@updateDelete");
+
+Route::get("standings", "StandingController@index");
+
+Route::get("news", "NewsController@index");
+Route::post("news", "NewsController@store");
+Route::put("news/{id}", "NewsController@update");
+Route::delete("news/{id}", "NewsController@updateDelete");
+
+Route::get("contacts", "ContactController@index");
+Route::post("contacts", "ContactController@store");
+Route::put("contacts/{id}", "ContactController@update");
+Route::delete("contacts/{id}", "ContactController@updateDelete");
+});
+
+
+Revisar en Http/Middleware/cors
+
+ public function handle($request, Closure $next)
+    {
+        if ($request->isMethod('options')) {
+            return response('', 200)
+              ->header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PUT, DELETE')
+              ->header('Access-Control-Allow-Headers', 'accept, content-type, x-xsrf-token, x-csrf-token'); // Add any required headers here
+        }
+        return $next($request);
+    }
+
+tambien  revisar en Revisar en Http/Kernel
+
+class Kernel extends HttpKernel
+{
+    /**
+     * The application's global HTTP middleware stack.
+     *
+     * These middleware are run during every request to your application.
+     *
+     * @var array
+     */
+    protected $middleware = [
+        \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
+        \NVSLOnline\Http\Middleware\TrimStrings::class,
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+    ];
+
+    /**
+     * The application's route middleware groups.
+     *
+     * @var array
+     */
+    protected $middlewareGroups = [
+        'web' => [
+            \NVSLOnline\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            // \Illuminate\Session\Middleware\AuthenticateSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \NVSLOnline\Http\Middleware\Cors::class,
+            //\NVSLOnline\Http\Middleware\VerifyCsrfToken::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
+
+        'api' => [
+            'throttle:60,1',
+            'bindings',
+        ],
+    ];
+
+    /**
+     * The application's route middleware.
+     *
+     * These middleware may be assigned to groups or used individually.
+     *
+     * @var array
+     */
+    protected $routeMiddleware = [
+        'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
+        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'can' => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest' => \NVSLOnline\Http\Middleware\RedirectIfAuthenticated::class,
+        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'cors' => \NVSLOnline\Http\Middleware\Cors::class,
+    ];
+}
 
 
 
-
-
-comandos apar los paquetes aumentados
+comandos para los paquetes aumentados
 
 bower install angular-linq --save
 bower install angular-filter --save
