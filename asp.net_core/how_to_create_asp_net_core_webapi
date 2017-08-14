@@ -3,6 +3,7 @@
 Install-Package Microsoft.EntityFrameworkCore
 Install-Package Microsoft.EntityFrameworkCore.SqlServer
 
+
 2. Create the "Models" Folder and the "Model.cs" class file
 
 public class ApplicationDbContext : DbContext

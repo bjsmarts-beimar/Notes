@@ -1,0 +1,37 @@
+===================================================================
+                    Create React App 
+===================================================================
+
+npm install -g create-react-app
+create-react-app helloworldapp
+
+cd helloworldapp
+npm start
+
+
+
+===================================================================
+                    Add Bootstrap to React App
+===================================================================
+
+https://www.youtube.com/watch?v=xOBDcZIhyic
+
+create-react-app bootstrapapp
+
+cd bootstrapapp
+npm start 
+
+run the following command
+npm install react-bootstrap --save
+npm install bootswatch --save
+
+add the following to index.html
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" />
+
+or add the following to the main css file
+@import '../node_modules/bootswatch/cerulean/bootstrap.min.css';
+
+
+
+
+
