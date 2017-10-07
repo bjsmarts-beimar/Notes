@@ -1,0 +1,107 @@
+Load configuration from external file
+=====================================
+
+- Create Project
+
+- Create the Configuration Model
+
+> ng g class shared\models\config
+
+export class Configuration{
+   constructor(public webApiBaseUrl: string, public debug: string, public Authenticated: boolean) {}
+}
+
+- Create the Configuration Service
+
+> ng g service shared\services\config
+
+import { Injectable } from '@angular/core';
+import { Http, Response, Headers, RequestOptions } from '@angular/http';
+import { Observable } from 'rxjs/Observable';
+import { Observer } from 'rxjs/Observer';
+import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/observable/throw';
+
+import {Configuration} from '../models/config';
+
+
+@Injectable()
+export class ConfigService {
+
+  private config: Configuration;
+
+  constructor(private http: Http) { }
+
+  load(url:string) { 
+    return new Promise((resolve) => {
+      this.http.get(url).map(res=>res.json())
+        .subscribe(config => {
+          this.config = config;
+          resolve();
+        });
+    });
+  }
+
+  getConfiguration():Configuration {
+    return this.config;
+  }  
+
+}
+
+- Add the reference to the Configuration Service to the Application
+
+    1. Edit app.module.ts
+
+    import { APP_INITIALIZER } from '@angular/core';
+    import { ConfigService } from './shared/services/config.service';
+
+    export function ConfigLoader(configService: ConfigService) {
+    return () => configService.load(environment.configFile); 
+    }
+
+    ConfigService,
+            {
+                provide: APP_INITIALIZER,
+                useFactory: ConfigLoader,
+                deps: [ConfigService],
+                multi: true
+            },   
+
+- Add the Environment Reference to Application
+
+    1. Edit app.module.ts
+
+    import { environment } from '../environments/environment';
+
+    2. Edit environments\environments.ts
+
+    export const environment = {
+    production: false,
+    envName: 'dev',
+    configFile: 'assets/config/config.json'
+    };
+
+- Add the Configuration File to Application
+
+    1. add the "config.json" to "assets/config" folder
+
+- You should be able to reference the Configuration Service in the Application
+
+    1. Add the Reference to the Configuration Service
+
+        import { ConfigService } from './shared/services/config.service';
+
+        constructor(private config: ConfigService) {}
+
+    2. You should be able to get access to the data in the configuration file
+
+        this.config.getConfiguration().webApiBaseUrl;
+
+
+
+
+
+
+
