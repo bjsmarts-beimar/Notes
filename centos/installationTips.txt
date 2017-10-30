@@ -1,3 +1,87 @@
+
+yum install net-tools
+
+DISABLE SELINUX
+===============
+
+vi /etc/selinux/config
+
+SELINUX=disabled
+
+reboot
+
+
+
+
+Install XWindows
+================
+
+yum -y groups install "GNOME Desktop" as root
+
+startx
+
+
+Install Git
+===========
+yum install git
+
+
+
+Install Visual Studio Code
+==========================
+https://code.visualstudio.com/docs/setup/linux
+
+- download the rpm 
+run the following command
+sudo yum install <file>.rpm
+
+
+
+Install Nodejs
+==============
+yum install -y gcc-c++ make
+curl -sL https://rpm.nodesource.com/setup_6.x | sudo -E bash -
+yum install nodejs
+node -v
+npm -v
+
+
+Install RVM Ruby Rails
+======================
+Run installation as root
+https://www.digitalocean.com/community/tutorials/how-to-install-ruby-on-rails-on-centos-6-with-rvm
+error: run the following command: gpg2 --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3
+
+
+Install MySQL 
+=============
+https://www.linode.com/docs/databases/mariadb/how-to-install-mariadb-on-centos-7
+
+
+Install Postgress
+=================
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-centos-7
+
+
+Install MongoDb
+===============
+https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-centos-7
+
+https://mlab.com/
+username: bmedina password: P@ss(0)d!
+
+To connect using the mongo shell:
+mongo ds147789.mlab.com:47789/referral -u <dbuser> -p <dbpassword>
+
+To connect using a driver via the standard MongoDB URI
+mongodb://<dbuser>:<dbpassword>@ds147789.mlab.com:47789/referral
+
+
+Install Ruby NVSL Online
+========================
+githug https://github.com/bjsmarts-beimar/rbnvslonline.git
+
+
 Install Node from the EPEL Repository
 
 sudo yum install epel-release
