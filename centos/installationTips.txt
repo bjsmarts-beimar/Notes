@@ -1,0 +1,11 @@
+Install Node from the EPEL Repository
+
+sudo yum install epel-release
+
+sudo yum install nodejs
+
+Install chrome on centos 7
+
+https://www.cyberciti.biz/faq/howto-install-google-chrome-on-redhat-rhel-fedora-centos-linux/
+
+

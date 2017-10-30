@@ -1,0 +1,23 @@
+What is Firebase????
+Firebase is NoSQL Data Store
+
+https://github.com/joeeames/FirebaseFundamentalsCourse
+
+NoSQl Categories
+================
+
+Key/Value (Ex: Firebase)
+Document (Ex: MongoDb, CouchDb)
+Column (Ex: Casandra)
+Graph (Ex: )
+
+Firebase Essentials
+===================
+
+1. It is Key/Value Database that looks like a Document Db 
+2. Hosted, you don't need to install It
+3. Url-oriented 
+4. Real-time
+
+
+
