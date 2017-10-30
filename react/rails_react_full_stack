@@ -1,0 +1,2 @@
+
+rails new testapp --database=postgresql --skip-turbolinks

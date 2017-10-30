@@ -1,69 +1,100 @@
 
-yum install net-tools
+CENTOS SETUP ENVIRONMENT
+========================
+
 
 DISABLE SELINUX
 ===============
 
 vi /etc/selinux/config
-
 SELINUX=disabled
 
-reboot
+# reboot
 
 
+CREATE A NEw SUDO USER
+======================
+- Log on as super user
+# adduser username
+# passwd username
+# usermod -aG wheel username
+
+
+- go to home directory by running command "# cd -"
+- then type '# su -'
+Password: 
+
+- Type # visudo 
+then add
+
+beimar        ALL=(ALL)      ALL
+
+- save and exit
+
+To test if sudo works run the following command: # sudo ls -la /root
+
+https://www.digitalocean.com/community/tutorials/how-to-create-a-sudo-user-on-centos-quickstart
+
+
+INSTALL NETWORKING tools
+========================
+# sudo yum install net-tools
 
 
 Install XWindows
 ================
 
-yum -y groups install "GNOME Desktop" as root
+# sudo yum -y groups install "GNOME Desktop" as root
 
-startx
+# sudo startx
+
 
 
 Install Git
 ===========
-yum install git
+# sudo yum install git
+
+Install chrome on centos 7
+==========================
+https://www.cyberciti.biz/faq/howto-install-google-chrome-on-redhat-rhel-fedora-centos-linux/
 
 
 
-Install Visual Studio Code
+INSTAL VISUAL STUDIO CODE
 ==========================
 https://code.visualstudio.com/docs/setup/linux
 
 - download the rpm 
 run the following command
-sudo yum install <file>.rpm
+# sudo yum install <file>.rpm
 
-
-
-Install Nodejs
+INSTALL NODEJS
 ==============
-yum install -y gcc-c++ make
-curl -sL https://rpm.nodesource.com/setup_6.x | sudo -E bash -
-yum install nodejs
-node -v
-npm -v
+# sudo yum install -y gcc-c++ make
+Install Node from the EPEL Repository
+# sudo yum install epel-release
+# sudo yum install nodejs
 
+To test installation run the following commands: node -v npm -v
 
-Install RVM Ruby Rails
-======================
+INSTALL RVM RUBY VERSION MANAGER
+================================
 Run installation as root
 https://www.digitalocean.com/community/tutorials/how-to-install-ruby-on-rails-on-centos-6-with-rvm
 error: run the following command: gpg2 --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3
 
 
-Install MySQL 
+INSTALL MYSQL 
 =============
 https://www.linode.com/docs/databases/mariadb/how-to-install-mariadb-on-centos-7
 
 
-Install Postgress
+INSTALL POSTGRES
 =================
 https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-centos-7
 
 
-Install MongoDb
+INSSTALL MONGODB
 ===============
 https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-centos-7
 
@@ -77,19 +108,12 @@ To connect using a driver via the standard MongoDB URI
 mongodb://<dbuser>:<dbpassword>@ds147789.mlab.com:47789/referral
 
 
-Install Ruby NVSL Online
+Install NVSL Online
 ========================
 githug https://github.com/bjsmarts-beimar/rbnvslonline.git
 
 
-Install Node from the EPEL Repository
 
-sudo yum install epel-release
 
-sudo yum install nodejs
-
-Install chrome on centos 7
-
-https://www.cyberciti.biz/faq/howto-install-google-chrome-on-redhat-rhel-fedora-centos-linux/
 
 
