@@ -83,6 +83,16 @@ Run installation as root
 https://www.digitalocean.com/community/tutorials/how-to-install-ruby-on-rails-on-centos-6-with-rvm
 error: run the following command: gpg2 --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3
 
+INSTALL RUBY ON rails
+=====================
+
+For versions >= 4.0:
+
+Rails 4 recommends 2.0 
+Rails 4.1/4.2 recommends 2.1 
+Rails 4.2.1 recommends 2.2 
+Rails 5.0 requires 2.2.2+ 
+
 
 INSTALL MYSQL 
 =============
@@ -93,6 +103,9 @@ INSTALL POSTGRES
 =================
 https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-centos-7
 
+Note: after install postgres, ruby on rails project will throw an error when try 
+to install pg gem.  Run the following command
+# sudo yum install postgresql-devel
 
 INSSTALL MONGODB
 ===============

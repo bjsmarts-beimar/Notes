@@ -1,2 +1,12 @@
 
-rails new testapp --database=postgresql --skip-turbolinks
+
+rails new testapp --database=postgresql --skip-turbolinks --skip-bundle --skip-test-unit
+
+Note: Run the following command to get ruby on rails and postgres run together
+# sudo yum install postgresql-devel
+# run createuser --interactive username 
+# rake db:create
+
+
+
+
