@@ -1,11 +1,89 @@
 
+Sample Applications
+https://medium.com/technically-speaking/isomorphic-reactjs-app-with-ruby-on-rails-part-1-server-side-rendering-8438bbb1ea1c
 
-rails new testapp --database=postgresql --skip-turbolinks --skip-bundle --skip-test-unit
+https://blog.shakacode.com/isomorphic-react-with-rails-part-i-440754e82a59
+https://blog.shakacode.com/isomorphic-react-with-rails-part-ii-614980b65aef
+https://blog.shakacode.com/isomorphic-react-with-rails-part-iii-f272e03087e3
+https://blog.shakacode.com/isomorphic-react-with-rails-part-iv-52b5edb8bf83
+
+
+Create Application
+
+# rails new testapp --database=postgresql --skip-turbolinks --skip-bundle --skip-test-unit
 
 Note: Run the following command to get ruby on rails and postgres run together
 # sudo yum install postgresql-devel
 # run createuser --interactive username 
 # rake db:create
+
+
+Create Home Page
+
+# rails g controller Home index
+
+Update routes
+
+root 'home#index'
+
+Check for Jquery. Apply the following command on the console
+jQuery().jquery
+
+Add React to Rails Project
+1. add the following gem to the Gemfile
+gem 'react-rails'
+2. run the bundle command
+# bundle
+3. restart the server
+# rails server
+4. add the following line to app/assets/javascript/application.js 
+//= require react
+5. refresh your browser to test the React Component was loaded
+
+Add a React Component to the Rails Project
+1. add the main.jsx to the app/assets/javascript/
+2. add the following code to the main.jsx
+class Main extends React.Component {
+  render() {
+    return <h1>Hello, World</h1>;
+  }
+}
+
+let documentReady = ()=> {
+    ReactDOM.render(
+        <Main />,
+        document.getElementById('root')
+      );
+};
+$(documentReady);
+3. open root index.html.erb file and add the react mount Component
+<div id="root"></div>
+4. Refresh your browser
+
+Add SEO Support
+===============
+1. add the following line to app/assets/javascript/application.js
+//= require react_ujs
+
+2. add the following code to the main.jsx
+
+class Main extends React.Component {
+  render() {
+    return <h1>SEO Content</h1>;
+  }
+}
+
+3. open root index.html.erb file and add the react helper
+<div id="root"></div>
+<%= react_component("Main") %>
+
+Note: {prerender: true} is not working !!!!!
+
+
+
+
+
+
 
 
 
