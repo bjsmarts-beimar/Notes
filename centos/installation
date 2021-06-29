@@ -112,7 +112,7 @@ INSSTALL MONGODB
 https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-centos-7
 
 https://mlab.com/
-username: bmedina password: P@ss(0)d!
+username: bmedina 
 
 To connect using the mongo shell:
 mongo ds147789.mlab.com:47789/referral -u <dbuser> -p <dbpassword>

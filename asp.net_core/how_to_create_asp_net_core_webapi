@@ -159,7 +159,7 @@ public enum eReferralV2TaskFaxType
 3. Add the connection string to appsettings.json
 
 "ConnectionStrings": {
-    "DefaultConnection": "Server=PC-SP20131;Database=eReferralV2Test;User Id=sa;Password=P@ss(0)d!;"
+    "DefaultConnection": "Server=PC-SP20131;Database=eReferralV2Test;User Id=sa;Password=;"
   },
 
 4. Open Startup.cs file and inject the DbContext class on "ConfigureServices" method

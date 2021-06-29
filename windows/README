@@ -1,6 +1,6 @@
 Add the app to Github
 ======================
-. username: beimar.medina@outlook.com password: P@ss(0)d!
+. username: beimar.medina@outlook.com
 . git init
 . git add .
 . git commit -m "Initial commit"
